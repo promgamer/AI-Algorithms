@@ -1,5 +1,5 @@
 package logic;
 
-public class Bomba {
+public class Bomba extends Edificio{
 	public Bomba(){}
 }

@@ -1,6 +1,6 @@
 package logic;
 
-public class Sucursal {
+public class Sucursal extends Edificio{
 	final private int capacidade_pacientes;
 	private int nrPacientes;
 	
