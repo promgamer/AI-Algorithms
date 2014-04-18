@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+<<<<<<< HEAD
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry exported="true" kind="lib" path="jgraph-5.13.0.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht-core-0.9.0.jar"/>
@@ -8,5 +9,9 @@
 	<classpathentry exported="true" kind="lib" path="jgrapht-demo-0.9.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht-ext-0.9.0-uber.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht-ext-0.9.0.jar"/>
+=======
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="lib" path="C:/Users/Acer/Downloads/watchmaker-framework-0.7.1/watchmaker-framework-0.7.1/watchmaker-framework-0.7.1.jar"/>
+>>>>>>> 9668461a4e7e30d158cc649ee618d956adb0940c
 	<classpathentry kind="output" path="bin"/>
 </classpath>
