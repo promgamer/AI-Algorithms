@@ -1,10 +1,14 @@
 package logic;
 
+import logic.Edificio;
+
 public class Sucursal extends Edificio{
 	final private int capacidade_pacientes;
 	private int nrPacientes;
 	
-	public Sucursal(int capacidade){
+	public Sucursal(String nome, int capacidade){
+		ID = lastID++;
+		this.nome = nome;
 		capacidade_pacientes = capacidade;
 		nrPacientes = 0;
 
