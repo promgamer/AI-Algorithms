@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Vector;
 
 import javax.swing.JApplet;
@@ -17,6 +18,7 @@ import org.jgrapht.ListenableGraph;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.ListenableDirectedGraph;
 import org.jgrapht.graph.ListenableDirectedWeightedGraph;
+import org.jgrapht.graph.ListenableUndirectedWeightedGraph;
 
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.swing.mxGraphComponent;
@@ -81,9 +83,10 @@ public class Clinica extends JApplet {
         // that's all there is to it!...
     }
 	
-	public ListenableDirectedWeightedGraph<Edificio, DefaultEdge> parseGrafoCidade(String filepath) throws IOException{
-		ListenableDirectedWeightedGraph<Edificio, DefaultEdge> cidade = 
-				new ListenableDirectedWeightedGraph<Edificio, DefaultEdge>(DefaultEdge.class);
+	@SuppressWarnings("unchecked")
+	public ListenableUndirectedWeightedGraph<Edificio, DefaultEdge> parseGrafoCidade(String filepath) throws IOException{
+		ListenableUndirectedWeightedGraph<Edificio, DefaultEdge> cidade = 
+				new ListenableUndirectedWeightedGraph<Edificio, DefaultEdge>(DefaultEdge.class);
 		
 		Map<Edificio, Map<Integer,Integer>> graphPrep = new HashMap<Edificio, Map<Integer,Integer>>();
 		
@@ -95,16 +98,36 @@ public class Clinica extends JApplet {
 		    Edificio novoEdf = null;
 		    if(infoEdificio[1].trim().equals("S")){
 		    	novoEdf = new Sucursal(infoEdificio[0].trim(), Integer.parseInt(infoEdificio[2].trim()));
-		    }else{
+		    }else if(infoEdificio[1].trim().equals("B")){
 		    	novoEdf = new Bomba(infoEdificio[0].trim());
+		    }else if(infoEdificio[1].trim().equals("H")){
+		    	novoEdf = new Habitacao(infoEdificio[0].trim(), Integer.parseInt(infoEdificio[2].trim()));
+		    }else{
+		    	reader.close();
+		    	return null;
 		    }
 		    
 		    String [] infoDestinos = split[1].trim().split("-"); // idEdifico,Distancia - ....
+		    Map<Integer, Integer> destinos = new HashMap<Integer,Integer>();
 		    for(String info : infoDestinos){
 		    	String[] specific = info.trim().split(",");
-		    	
+		    	destinos.put(Integer.parseInt(specific[0].trim()), Integer.parseInt(specific[1].trim()));
 		    }
-		    
+		    graphPrep.put(novoEdf, destinos);
+		}
+		reader.close();
+		
+		//Build Graph
+		for(Map.Entry<Edificio, Map<Integer,Integer>> entry : graphPrep.entrySet()){
+			cidade.addVertex(entry.getKey());
+		}
+		
+		Map.Entry<Edificio, Map<Integer,Integer>>[] listaEdfs = (Entry<Edificio, Map<Integer, Integer>>[]) graphPrep.entrySet().toArray();
+		for(Map.Entry<Edificio, Map<Integer,Integer>> entry : graphPrep.entrySet()){ // para cada edificio
+			for(Map.Entry<Integer,Integer> entry2 : entry.getValue().entrySet()){ // adicionar ligação
+				DefaultEdge e = cidade.addEdge(entry.getKey(), listaEdfs[entry2.getKey()].getKey()); // edificio - edificio
+				cidade.setEdgeWeight(e, entry2.getValue()); // peso
+			}
 		}
 		
 		return cidade;
