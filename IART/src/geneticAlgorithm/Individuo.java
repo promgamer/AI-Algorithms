@@ -53,7 +53,7 @@ public class Individuo {
 	/** Obtem (e calcula) a adaptacao de um individuo **/
 	public int getAdaptacao(){
 		if (adaptacao == 0) // calcula adaptacao primeiro, se ainda nao tiver sido calculada
-			adaptacao = Ambiente.calculaAdaptacao();
+			adaptacao = Ambiente.calculaAdaptacao(genes);
 		
 		return adaptacao;
 	}

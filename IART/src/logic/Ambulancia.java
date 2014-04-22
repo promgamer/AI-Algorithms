@@ -25,12 +25,16 @@ public class Ambulancia {
 		return combustivel;
 	}
 	
-	public int ocupar(int nr){
+	public boolean ocupar(int nr){
 		if( nrOcupantes + nr > capacidade_ocupantes)
-			return -1;
-		else{
-			nrOcupantes += nr;
-			return nrOcupantes;
-		}
+			return false;
+
+		nrOcupantes += nr;
+		return true;
+
+	}
+	
+	public int getOcupantes(){
+		return nrOcupantes;
 	}
 }

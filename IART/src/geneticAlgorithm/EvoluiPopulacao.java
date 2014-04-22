@@ -72,7 +72,9 @@ public class EvoluiPopulacao {
     
     /** Faz o crossover 
      * 
-     * O crossover é calculado gene a gene...
+     * O crossover é calculado gene a gene... <- MAL
+     * 
+     * TODO: refazer funcao -> pontos de crossover
      * 
      * **/
     private static Individuo crossover(Individuo indiv1, Individuo indiv2) {

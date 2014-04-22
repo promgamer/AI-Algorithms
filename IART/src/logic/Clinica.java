@@ -139,11 +139,6 @@ public class Clinica extends JApplet {
 
 		return cidade;
 	}
-
-	public Vector<Rota> geraPopulação(){
-		//for()
-		return null;
-	}
 }
 
 
