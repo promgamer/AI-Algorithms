@@ -1,0 +1,5 @@
+Espinho - S - 30 # 2,10 - 3,2
+Anta - B # 4,4 - 3,6
+Guetim - S - 20 # 4,7
+Porto - H - 3 # 1,20
+Barcelos - S - 20 # 4,30 - 3,30
