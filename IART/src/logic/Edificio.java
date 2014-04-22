@@ -56,5 +56,9 @@ public class Edificio {
 	public int esvaziaEdificio(){
 		return retirarOcupantes(ocupantes);
 	}
+	
+	public String toString(){
+		return nome;
+	}
 
 }
