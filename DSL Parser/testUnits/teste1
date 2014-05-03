@@ -1,0 +1,6 @@
+/*@mat
+in int A[];
+in float B[100];
+out float C[];
+C=A+B;
+*/
