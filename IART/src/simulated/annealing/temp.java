@@ -1,4 +1,4 @@
-package simAnnealing;
+package simulated.annealing;
 
 
 public class temp {
