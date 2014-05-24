@@ -1,6 +1,5 @@
 package geneticAlgorithm;
 
-import java.util.Random;
 import java.util.Vector;
 
 public class EvoluiPopulacao {
@@ -18,9 +17,7 @@ public class EvoluiPopulacao {
     public static Populacao evoluiPopulacao(Populacao populacaoAntiga){
     	Populacao novaPopulacao = new Populacao(populacaoAntiga.getSize());
     	
-    	//TODO: Pensar nisto -> para ja mantemos uma politica elitista
-    	// so para o primeiro individuo (tal como o stor faz nos testes :p )
-    	// pensar nisto!
+    	// Politica elitista: manter sempre o melhor
     	novaPopulacao.setIndividuo(0, populacaoAntiga.getMelhorAdaptado());
     	
     	/** Crossover Aleatorio **/
@@ -42,9 +39,7 @@ public class EvoluiPopulacao {
     
     /** Escolhe um individuo para o crossover 
      * 
-     * De um grupo de elementos, selecciona o elemento mais bem adaptado
-     * 
-     * TODO: talvez implementar antes roleta??
+     * ROLETA TODO;
      * 
      * **/
     private static Individuo selecionaIndividuo(Populacao pop) {

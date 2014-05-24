@@ -1,5 +1,10 @@
 package logic;
 
+import geneticAlgorithm.Ambiente;
+import geneticAlgorithm.EvoluiPopulacao;
+import geneticAlgorithm.Individuo;
+import geneticAlgorithm.Populacao;
+
 import java.awt.Dimension;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -22,9 +27,8 @@ public class Clinica extends JApplet {
 	private static final long serialVersionUID = 8528919979874509607L;
 
 	Vector<Sucursal> sucursais;
-	ListenableUndirectedWeightedGraph<Edificio, Estrada> cidade = null;
-
-
+	public static ListenableUndirectedWeightedGraph<Edificio, Estrada> cidade = null;
+	
 	private static final Dimension DEFAULT_SIZE = new Dimension(1024, 728);
 
 	private JGraphXAdapter<Edificio, Estrada> jgxAdapter;
@@ -33,7 +37,6 @@ public class Clinica extends JApplet {
 	public static void main(String [] args) throws IOException
 	{
 		Clinica clinica = new Clinica();
-		System.out.println(args[0]);
 		clinica.init(args[0]);
 
 
@@ -44,49 +47,51 @@ public class Clinica extends JApplet {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
+		
+		/* Calculos do algoritmo genetico */
+		int contador = 1;
+		
+		Populacao pop = new Populacao(4, 8, cidade.vertexSet().size());;
+		
+		/*
+		while( contador != 2){
+			pop = EvoluiPopulacao.evoluiPopulacao(pop);
+			
+			
+			System.out.println("Geracao " + contador + ": " + pop.getMelhorAdaptado().toString());
+			contador++;
+		}*/
+		
+		for(int i = 0; i < pop.getSize(); i++)
+			pop.getIndividuo(i).imprimeGenes();
+		
+		pop.getMelhorAdaptado().imprimeGenes();
+		//pop.getMelhorAdaptado().toString();
+	
 	}
 
 
-	public void init(String filepath) throws IOException
-	{
-		// create a JGraphT graph
-		//ListenableGraph<Edificio, DefaultEdge> cidade = new ListenableDirectedGraph<Edificio, DefaultEdge>(DefaultEdge.class);
+	public void init(String filepath) throws IOException {
 		cidade = parseGrafoCidade(filepath);
+
+		Ambiente.setCapacidadeAmbulancia(15);
+		
 		// create a visualization using JGraph, via an adapter
 		jgxAdapter.setEdgeLabelsMovable(false);
 		jgxAdapter.setAllowDanglingEdges(false);
 		getContentPane().add(new mxGraphComponent(jgxAdapter));
 		resize(DEFAULT_SIZE);
-		
-		/*
-        Sucursal v1 = new Sucursal("1",10);
-        Sucursal v2 = new Sucursal("2",10);
-        Sucursal v3 = new Sucursal("3",10);
-        Bomba v4 = new Bomba("4");
-
-        cidade.addVertex(v1);
-        cidade.addVertex(v2);
-        cidade.addVertex(v3);
-        cidade.addVertex(v4);
-
-        cidade.addEdge(v1, v2);
-        cidade.addEdge(v2, v3);
-        cidade.addEdge(v3, v1);
-        cidade.addEdge(v4, v3);*/
 
 		// positioning via jgraphx layouts
 		mxCircleLayout layout = new mxCircleLayout(jgxAdapter);
 		layout.execute(jgxAdapter.getDefaultParent());
 
-		// that's all there is to it!...
 	}
 
 	public ListenableUndirectedWeightedGraph<Edificio, Estrada> parseGrafoCidade(String filepath) throws IOException{
 		ListenableUndirectedWeightedGraph<Edificio, Estrada> cidade = 
 				new ListenableUndirectedWeightedGraph<Edificio, Estrada>(Estrada.class);
 		jgxAdapter = new JGraphXAdapter<Edificio, Estrada>(cidade);
-
-		//Map<Edificio, Map<Integer,Integer>> graphPrep = new HashMap<Edificio, Map<Integer,Integer>>();
 
 		Vector<Edificio> edificios = new Vector<Edificio>();
 		Vector<Map<Integer,Integer>> destinos = new Vector<Map<Integer,Integer>>();
@@ -123,7 +128,6 @@ public class Clinica extends JApplet {
 		//Build Graph
 		for(Edificio edf : edificios){
 			cidade.addVertex(edf);
-			//System.out.println(edf);
 		}
 
 		int i = 0;
@@ -132,12 +136,14 @@ public class Clinica extends JApplet {
 				Edificio edf1 = edificios.elementAt(i), edf2 = edificios.elementAt(entry.getKey()-1);
 				Estrada e = cidade.addEdge(edf1, edf2); // edificio - edificio
 				cidade.setEdgeWeight(e, entry.getValue()); // peso
-				//System.out.println(edf1 + " - " +  edf2 + " : " + entry.getValue());
 			}
 			i++;
 		}
 
 		return cidade;
+	}
+	
+	public static void getCidade(){//problema do caralho
 	}
 }
 

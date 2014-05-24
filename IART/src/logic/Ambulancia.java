@@ -1,8 +1,7 @@
 package logic;
 
 public class Ambulancia {
-	final static int combustivel_max = 80; // 80 litros
-	final static float consumo_km = 0.08f; // 8 l / 100 km
+	final static int combustivel_max = 30;
 	final int capacidade_ocupantes;
 	private int nrOcupantes;
 	private float combustivel;
@@ -18,7 +17,7 @@ public class Ambulancia {
 	}
 	
 	public void consumir(int km){
-		combustivel -= km*consumo_km;
+		combustivel -= km;
 	}
 	
 	public float combustivel_restante(){
@@ -34,7 +33,23 @@ public class Ambulancia {
 
 	}
 	
+	public int getEspacoDisponivel(){
+		return capacidade_ocupantes - nrOcupantes;
+	}
+	
 	public int getOcupantes(){
 		return nrOcupantes;
+	}
+	
+	public boolean isFull(){
+		if( nrOcupantes == capacidade_ocupantes )
+			return true;
+		else return false;
+	}
+	
+	public void retirar(int n){
+		if( n <= nrOcupantes ){
+			nrOcupantes -= n;
+		}
 	}
 }

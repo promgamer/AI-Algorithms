@@ -7,18 +7,18 @@ public class Populacao {
 	private Vector<Individuo> individuos;
 	
 	/** Construtor para gerar uma populacao **/
-	Populacao(int tamanhoPopulacao, int tamanhoGenes){
+	public Populacao(int tamanhoPopulacao, int tamanhoGenes, int opcoesGenes){
 		individuos = new Vector<Individuo>(tamanhoPopulacao);
 		
 		/** Cria Individuos para essa populuacao **/
 		 for (int i = 0; i < tamanhoPopulacao; i++) {
-             Individuo novoIndividuo = new Individuo(tamanhoGenes);
+             Individuo novoIndividuo = new Individuo(tamanhoGenes, opcoesGenes);
              individuos.add(novoIndividuo);
          }
 	}
 	
 	/** Construtor para criar uma populacao vazia **/
-	Populacao(int tamanhoPopulacao){
+	public Populacao(int tamanhoPopulacao){
 		individuos = new Vector<Individuo>(tamanhoPopulacao);
 	}
 	
@@ -29,7 +29,9 @@ public class Populacao {
 	
 	/** Modifica/adiciona um individuo à populacao **/
 	public void setIndividuo(int pos, Individuo i){
-		individuos.set(pos, i);
+		if( pos >= individuos.size()){
+			individuos.add(i);
+		} else individuos.set(pos, i);
 	}
 	
 	/** Get do tamanho do vector de individuos **/
@@ -37,15 +39,12 @@ public class Populacao {
 		return individuos.size();
 	}
 	
-	/** Obtem o individuo da populacao melhor adaptado
-	 * 
-	 * TODO: talvez melhorar a pesquisa da melhor solucao??
-	 * 
-	 **/
+	/** Obtem o individuo da populacao melhor adaptado **/
 	public Individuo getMelhorAdaptado(){
 		Individuo melhor = individuos.elementAt(0);
 		
 		for (int i = 0; i < individuos.size(); i++) {
+			
             if (melhor.getAdaptacao() < individuos.elementAt(i).getAdaptacao()) {
                 melhor = individuos.elementAt(i);
             }
@@ -53,5 +52,12 @@ public class Populacao {
 		
 		return melhor;
 	}
+
+	public void imprimePopulacao() {
+		for(int i = 0; i < individuos.size(); i++)
+			individuos.elementAt(i).imprimeGenes();
+	}
+	
+	
 
 }
