@@ -10,12 +10,12 @@ public class Sucursal extends Edificio{
 	}
 	
 	/** Adiciona n ocupantes ao edificio **/
-	public boolean adicionaOcupantes(int n){
-		if(ocupantes + n > capacidadeMaxima)
-			return false;
+	public int adicionaOcupantes(int n){
+		if( n > getEspacoDisponivel() )
+			n = getEspacoDisponivel();
 		
 		ocupantes += n;
-		return true;
+		return n;
 	}
 
 }

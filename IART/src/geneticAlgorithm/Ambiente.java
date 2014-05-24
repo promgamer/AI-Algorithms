@@ -1,63 +1,123 @@
 package geneticAlgorithm;
 
+import java.io.IOException;
 import java.util.Vector;
 
 import logic.Ambulancia;
 import logic.Bomba;
+import logic.Clinica;
 import logic.Edificio;
+import logic.Estrada;
 import logic.Habitacao;
 import logic.Sucursal;
-
-import org.jgraph.graph.DefaultEdge;
 import org.jgrapht.graph.ListenableUndirectedWeightedGraph;
 
 public class Ambiente {
 
-	private static ListenableUndirectedWeightedGraph<Edificio, DefaultEdge> cidade;
-	private static ListenableUndirectedWeightedGraph<Edificio, DefaultEdge> cidade_backup;
+	private static ListenableUndirectedWeightedGraph<Edificio, Estrada> cidade;
+	private static int capacidade_ambulancia;
 	private static Ambulancia ambulancia;
 	
 	public static int NoInicial = 1;
 	
-	public static int calculaAdaptacao(Vector<Integer> rota) {
+	
+	
+	public static double calculaAdaptacao(Vector<Integer> rota) {
+		
+		// Cria uma nova ambulancia
+		ambulancia = new Ambulancia(capacidade_ambulancia);
+		
+		// cria uma cópia
+		cidade = Clinica.getCidade();
+		ListenableUndirectedWeightedGraph<Edificio, Estrada> cidade2 = Clinica.cidade;
+		
+		if( cidade == cidade2){
+			System.out.println("true");
+		} else System.out.println("false");
+		
+		/* Variaveis de contagem */
+		double pacientes_recolhidos = 0;
+		double pacientes_entregues = 0;
+		double distancia_percorrida = 0;
+		
+		/* Variveis de verificacao de rota */
+		int idAtual = NoInicial;
+		int idAntigo;
+		
 		
 		// Verifica se a rota é possivel
 		// isto é, se existem edges que ligam os vertices
 		// se a rota é inválida, então este é um mau individuo neste ambiente
-		if( verificaRota(rota) == false)
+		if( verificaRota(rota) == false){
+			System.out.println("Vai sair");
 			return 0;
+		}
 		
-		//
+
+		// CICLO
 		while(ambulancia.combustivel_restante() != 0 && rota.size() != 0){
 			
+			// Guarda o no atual como antigo
+			idAntigo = idAtual;
+			
 			//obtem o no atual
-			int idAtual = rota.remove(0);
+			idAtual = rota.remove(0);
+			
+			if(idAntigo == idAtual)
+				continue;
+
+			
 			Edificio e = obtemVertice(idAtual);
 			
+			
+			//calcula a distancia percorrida
+			distancia_percorrida += calculaDistancia(obtemVertice(idAntigo), e);
+			
+			// Verifica se é fim de rota
+			if( verificaFimDeRota(e) == true ){
+				System.out.println("break");
+				break;
+			}
+				
+			
+			/** Verifica as habitações e faz ações consoante o seu tipo **/
+			
 			if( e instanceof Habitacao ){
-				//verifica se pode levar todos os pacientes desta habitacao
-				if(ambulancia.){
+				
+				if( !ambulancia.isFull()){ //verifica se não esta cheia
 					
+					int retirados = e.retirarOcupantes( ambulancia.getEspacoDisponivel() );
+					ambulancia.ocupar( retirados );
+					
+					// aumenta o contador
+					pacientes_recolhidos += retirados;
 				}
-				
-				
-				
+					
 			} else if( e instanceof Bomba ){
 				
+				ambulancia.abastecer();
+				
 			} else if( e instanceof Sucursal ){
+				System.out.println("aqui");
+				int adicionados = ((Sucursal) e).adicionaOcupantes( ambulancia.getOcupantes() );
+				ambulancia.retirar(adicionados);
+				
+				//aumenta o contador
+				pacientes_entregues += adicionados;
 				
 			}
 			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-		}
+		} // FIM DO WHILE
+		
+		// Calcula o fitness deste individuo
+		double fitness;
+		if(distancia_percorrida != 0)
+			 fitness = (pacientes_entregues + pacientes_recolhidos) / distancia_percorrida;
+		else fitness = 0;
+		
+		System.out.println("entregues:" + pacientes_entregues +" ; recolhidos: " + pacientes_recolhidos + "; distancia: " + distancia_percorrida + " ; fitness: " + fitness);
+		
+		return fitness;
 		
 	}
 	
@@ -76,16 +136,17 @@ public class Ambiente {
 			Edificio e2 = obtemVertice(i+1);
 			
 			// verifica se existe uma ligacao entre os dois edificios
-			if( !cidade.containsEdge(e1,e2) )
+			if( !cidade.containsEdge(e1,e2) && e1 != null && e2 != null ){
+				System.out.println("E1: " + e1.nome + "  E2: " + e2.nome);
 				return false;
+			}
 		}
 		
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
 	private static Edificio obtemVertice(int ID) {
-		Vector<Edificio> edificios = (Vector<Edificio>) cidade.vertexSet();
+		Vector<Edificio> edificios = new Vector<>(cidade.vertexSet());
 		
 		for(int i = 0; i < edificios.size(); i++){
 			if(edificios.elementAt(i).ID == ID)
@@ -95,9 +156,8 @@ public class Ambiente {
 		return null;
 	}
 	
-	@SuppressWarnings("unchecked" )
 	private static int pacientesPorTransportar(){
-		Vector<Edificio> edificios = (Vector<Edificio>) cidade.vertexSet();
+		Vector<Edificio> edificios = new Vector<>(cidade.vertexSet());
 		
 		int contador = 0;
 		
@@ -118,6 +178,17 @@ public class Ambiente {
 			return true;
 		
 		return false;
+	}
+	
+	/** Calcula a distancia percorrida entre dois nos **/
+	private static int calculaDistancia(Edificio N1, Edificio N2){
+		return (int) cidade.getEdgeWeight(cidade.getEdge(N1, N2));
+	}
+	
+	/** Define a capacidade da ambulancia **/
+	public static void setCapacidadeAmbulancia(int i) {
+		capacidade_ambulancia = i;
+		
 	}
 
 }

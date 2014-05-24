@@ -6,28 +6,30 @@ import java.util.Vector;
 public class Individuo {
 	
 	private Vector<Integer> genes;
+	private static int genesOpt;
 	
 	/** Adaptacao deste individuo ao meio **/
-	private int adaptacao;
+	private double adaptacao;
 	
 	/** Construtor default **/
-	Individuo(int genesSize){
+	public Individuo(int genesSize, int genesOption){
 		adaptacao = 0;
+		genesOpt = genesOption;
 		genes = new Vector<Integer>(genesSize);
 		
 		
 		/** Genes random **/
 		for (int i = 0; i < genesSize; i++) 
-            genes.add(geraGene()); // Intervalo [1,genesSize]
+            genes.add(geraGene()); // Intervalo [1,genesOpt]
 	}
 
 	public int geraGene() {
 		Random r = new Random();
-		return r.nextInt() % genes.size() + 1;
+		return r.nextInt(genesOpt) + 1;
 	}
 	
 	/** Construtor para um individuo com genes especificos **/
-	Individuo(Vector<Integer> genes){
+	public Individuo(Vector<Integer> genes){
 		adaptacao = 0;
 		this.genes = genes;
 	}
@@ -51,11 +53,26 @@ public class Individuo {
 	
 	
 	/** Obtem (e calcula) a adaptacao de um individuo **/
-	public int getAdaptacao(){
+	public double getAdaptacao(){
 		if (adaptacao == 0) // calcula adaptacao primeiro, se ainda nao tiver sido calculada
 			adaptacao = Ambiente.calculaAdaptacao(genes);
 		
 		return adaptacao;
+	}
+
+	@Override
+	public String toString() {
+		return new Double(adaptacao).toString();
+	}
+	
+	public void imprimeGenes(){
+		for(int i = 0; i < genes.size(); i++)
+			System.out.print(genes.elementAt(i) + " ");
+		
+		if(genes.size() == 0)
+			System.out.println("vazio");
+		
+		System.out.println("ola");
 	}
 
 }
