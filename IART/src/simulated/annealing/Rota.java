@@ -1,6 +1,5 @@
 package simulated.annealing;
 
-
-public class temp {
+public class Rota {
 
 }
