@@ -52,4 +52,8 @@ public class Ambulancia {
 			nrOcupantes -= n;
 		}
 	}
+	
+	public Ambulancia clone(){
+		return new Ambulancia(capacidade_ocupantes);
+	}
 }
