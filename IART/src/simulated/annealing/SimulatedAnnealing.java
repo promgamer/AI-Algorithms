@@ -1,7 +1,5 @@
 package simulated.annealing;
 
-import logic.Clinica;
-
 public class SimulatedAnnealing {
 	private double temperaturaAtual = 0, temperaturaFinal = 0;
 	private double taxaArrefecimento = 0;
@@ -24,8 +22,25 @@ public class SimulatedAnnealing {
     }
 	
 	public void run(){
+		Rota solucaoAtual = gerador.geraRota();
+		Rota melhorSolucao = new Rota(solucaoAtual);
+		
 		do {
-			
+			Rota novaSolucao = gerador.geraRota();
+
+            int energiaSolucaoAtual = solucaoAtual.getDistanciaTotal();
+            int energiaNovaSolucao = novaSolucao.getDistanciaTotal();
+
+            if (probabilidadeEscolha(energiaSolucaoAtual, energiaNovaSolucao, temperaturaAtual) > Math.random()) {
+                solucaoAtual = new Rota(novaSolucao);
+            }
+
+            // Guardar a melhor solução até agr encontrada
+            if (solucaoAtual.getDistanciaTotal() < melhorSolucao.getDistanciaTotal()) {
+                melhorSolucao = new Rota(solucaoAtual);
+            }
+            
+            temperaturaAtual *= 1-taxaArrefecimento;
 		} while( temperaturaAtual > temperaturaFinal);
 	}
 	

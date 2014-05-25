@@ -5,23 +5,33 @@ import java.util.Vector;
 import logic.Edificio;
 
 public class Rota {
-	private Vector<Edificio> rota = new Vector<Edificio>();
+	private Vector<Edificio> rota = null;
 	public int distanciaTotal = 0;
-	public int pacientesRestantes = 0;
 	
-	public Rota(){}
+	public Rota(){
+		rota = new Vector<Edificio>();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Rota(Rota r){
+		this.rota = (Vector<Edificio>) r.getRota().clone();
+		this.distanciaTotal = r.getDistanciaTotal();
+	}
 	
 	public void adicionarEdificio(Edificio edf){
 		rota.add(edf);
+	}
+	
+	public Vector<Edificio> getRota(){
+		return rota;
 	}
 
 	public int getDistanciaTotal() {
 		return distanciaTotal;
 	}
-
-	public int getPacientesRestantes() {
-		return pacientesRestantes;
-	}
 	
+	public void addDistancia(int d){
+		distanciaTotal += d;
+	}
 	
 }
