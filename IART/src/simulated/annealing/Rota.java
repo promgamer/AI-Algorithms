@@ -6,7 +6,7 @@ import logic.Edificio;
 
 public class Rota {
 	private Vector<Edificio> rota = null;
-	public int distanciaTotal = 0;
+	public double distanciaTotal = 0;
 	
 	public Rota(){
 		rota = new Vector<Edificio>();
@@ -26,12 +26,19 @@ public class Rota {
 		return rota;
 	}
 
-	public int getDistanciaTotal() {
+	public double getDistanciaTotal() {
 		return distanciaTotal;
 	}
 	
-	public void addDistancia(int d){
+	public void addDistancia(double d){
 		distanciaTotal += d;
+	}
+
+	public void print() {
+		for(int i=0; i<rota.size(); i++){
+			System.out.println(rota.elementAt(i).ID + " - " + rota.elementAt(i).nome);
+		}
+		
 	}
 	
 }

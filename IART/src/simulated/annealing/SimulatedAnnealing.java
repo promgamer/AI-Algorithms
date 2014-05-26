@@ -13,12 +13,12 @@ public class SimulatedAnnealing {
 		this.gerador = gerador;
 	}
 	
-	private double probabilidadeEscolha(int energia, int energiaProxSolucao, double temperatura) {
-        if (energiaProxSolucao < energia) { //a solução nova é melhor
+	private double probabilidadeEscolha(double energiaSolucaoAtual, double energiaNovaSolucao, double temperatura) {
+        if (energiaNovaSolucao < energiaSolucaoAtual) { //a solução nova é melhor
             return 1.0;
         }
         // nova solução é má -> calcular probabilidade de aceitação da solução
-        return Math.exp((energia - energiaProxSolucao) / temperatura);
+        return Math.exp((energiaSolucaoAtual - energiaNovaSolucao) / temperatura);
     }
 	
 	public void run(){
@@ -28,8 +28,8 @@ public class SimulatedAnnealing {
 		do {
 			Rota novaSolucao = gerador.geraRota();
 
-            int energiaSolucaoAtual = solucaoAtual.getDistanciaTotal();
-            int energiaNovaSolucao = novaSolucao.getDistanciaTotal();
+            double energiaSolucaoAtual = solucaoAtual.getDistanciaTotal();
+            double energiaNovaSolucao = novaSolucao.getDistanciaTotal();
 
             if (probabilidadeEscolha(energiaSolucaoAtual, energiaNovaSolucao, temperaturaAtual) > Math.random()) {
                 solucaoAtual = new Rota(novaSolucao);

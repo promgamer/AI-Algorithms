@@ -47,8 +47,7 @@ public class Gerador {
 		boolean prioridadeSucursal = false, prioridadeBomba = false;
 
 		do{
-			ArrayList<Estrada> estradas = new ArrayList<Estrada>( cidade.outgoingEdgesOf(atual) );
-			estradas.addAll(cidade.incomingEdgesOf(atual));
+			ArrayList<Estrada> estradas = new ArrayList<Estrada>( cidade.edgesOf(atual) );
 
 			//obter o maximo de distancia possivel percorrer nos proximos 2 nós -> previsão de combustivel
 			double max = getMaxDistancia(atual);
@@ -84,12 +83,15 @@ public class Gerador {
 				prioridadeBomba = false;
 			}
 			
+			rota.adicionarEdificio(atual); // adicionar o edificio atual à rota antes de progredir
+			
 			boolean gotIt = false;
 			if( prioridadeBomba ){ // escolhe a 1a Bomba disponivel
 				for(int i = 0; i < estradas.size(); i++){
 					Edificio edf = cidade.getEdgeTarget(estradas.get(i));
 					if(edf instanceof Bomba){
 						atual = edf;
+						rota.addDistancia(cidade.getEdgeWeight(estradas.get(i)));
 						gotIt = true;
 						prioridadeBomba = false;
 						break;
@@ -103,6 +105,7 @@ public class Gerador {
 						if(edf.getEspacoDisponivel() == 0)
 							continue;
 						atual = edf;
+						rota.addDistancia(cidade.getEdgeWeight(estradas.get(i)));
 						gotIt = true;
 						prioridadeSucursal = false;
 						break;
@@ -113,6 +116,7 @@ public class Gerador {
 			if( !gotIt ){
 				int rng2 = (int)(Math.random() * estradas.size());
 				atual = cidade.getEdgeTarget(estradas.get(rng2));
+				rota.addDistancia(cidade.getEdgeWeight(estradas.get(rng2)));
 			}
 		}while(nrPacientesRestantes > 0);
 
@@ -123,39 +127,19 @@ public class Gerador {
 	private double getMaxDistancia(Edificio atual) {
 		double max = 0;
 
-		for( Estrada e : cidade.incomingEdgesOf(atual) ){
+		for( Estrada e : cidade.edgesOf(atual) ){
 			double t = cidade.getEdgeWeight(e);
 			Edificio edf = cidade.getEdgeTarget(e);
 
 			double t2 = 0;
-			for(Estrada e2 : cidade.outgoingEdgesOf(edf)){
+			for(Estrada e2 : cidade.edgesOf(edf)){
 				double t3 = cidade.getEdgeWeight(e2);
 				if( t3 > t2 ) t2 = t3;
 			}
-			for(Estrada e2 : cidade.incomingEdgesOf(edf)){
-				double t3 = cidade.getEdgeWeight(e2);
-				if( t3 > t2 ) t2 = t3;
-			}
-
+			
 			if( t + t2 > max) max = t + t2;
 		}
-
-		for( Estrada e : cidade.outgoingEdgesOf(atual) ){
-			double t = cidade.getEdgeWeight(e);
-			Edificio edf = cidade.getEdgeTarget(e);
-
-			double t2 = 0;
-			for(Estrada e2 : cidade.outgoingEdgesOf(edf)){
-				double t3 = cidade.getEdgeWeight(e2);
-				if( t3 > t2 ) t2 = t3;
-			}
-			for(Estrada e2 : cidade.incomingEdgesOf(edf)){
-				double t3 = cidade.getEdgeWeight(e2);
-				if( t3 > t2 ) t2 = t3;
-			}
-
-			if( t + t2 > max) max = t + t2;
-		}
+		
 		return max;
 	}
 
@@ -168,17 +152,8 @@ public class Gerador {
 		Clinica cli = new Clinica();
 		ListenableUndirectedWeightedGraph<Edificio, Estrada> city = cli.parseGrafoCidade("grafoCidade.txt");
 		Gerador g = new Gerador(new Ambulancia(8), 40, city);
-		//Rota r = g.geraRota();
-		ArrayList<Edificio> edificios = new ArrayList<Edificio>( city.vertexSet() );
-		ArrayList<Estrada> est1 = new ArrayList<Estrada>(city.edgesOf(edificios.get(1)));
-		//ArrayList<Estrada> est2 = new ArrayList<Estrada>(city.incomingEdgesOf(edificios.get(1)));
-		System.out.println(edificios.get(1).nome);
-		//System.out.println(est2);
-		for (int i=0; i<est1.size(); i++){
-			System.out.println(
-					city.getEdgeSource(est1.get(i)).nome+" - "+
-							city.getEdgeTarget(est1.get(i)).nome);
-		}
+		Rota r = g.geraRota();
+		r.print();
 
 	}
 }
