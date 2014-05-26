@@ -12,7 +12,7 @@ public class Sucursal extends Edificio{
 	/** Adiciona n ocupantes ao edificio **/
 	public int adicionaOcupantes(int n){
 		if( n > getEspacoDisponivel() )
-			return n = getEspacoDisponivel();
+			return getEspacoDisponivel();
 		
 		ocupantes += n;
 		return n;
