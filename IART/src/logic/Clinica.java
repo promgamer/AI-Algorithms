@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JApplet;
@@ -143,7 +144,8 @@ public class Clinica extends JApplet {
 		return cidade;
 	}
 	
-	public static void getCidade(){//problema do caralho
+	public static ListenableUndirectedWeightedGraph<Edificio, Estrada> getCidade(){//problema do caralho
+		return cidade;
 	}
 }
 

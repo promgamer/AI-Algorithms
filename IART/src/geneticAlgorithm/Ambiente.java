@@ -31,6 +31,7 @@ public class Ambiente {
 		cidade = Clinica.getCidade();
 		ListenableUndirectedWeightedGraph<Edificio, Estrada> cidade2 = Clinica.cidade;
 		
+		
 		if( cidade == cidade2){
 			System.out.println("true");
 		} else System.out.println("false");
@@ -105,7 +106,7 @@ public class Ambiente {
 				//aumenta o contador
 				pacientes_entregues += adicionados;
 				
-			}
+			} else { System.out.println("ERRO!: " + idAtual); }
 			
 		} // FIM DO WHILE
 		
