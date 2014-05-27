@@ -114,8 +114,13 @@ public class Gerador {
 			}
 			
 			if( !gotIt ){
-				int rng2 = (int)(Math.random() * estradas.size());
-				atual = cidade.getEdgeTarget(estradas.get(rng2));
+				Edificio temp = null;
+				int rng2;
+				do{
+					rng2 = (int)(Math.random() * estradas.size());
+					temp = cidade.getEdgeTarget(estradas.get(rng2));
+				}while(atual == temp );
+				atual = temp;
 				rota.addDistancia(cidade.getEdgeWeight(estradas.get(rng2)));
 			}
 		}while(nrPacientesRestantes > 0);
@@ -151,7 +156,7 @@ public class Gerador {
 	public static void main(String[] args) throws IOException{
 		Clinica cli = new Clinica();
 		ListenableUndirectedWeightedGraph<Edificio, Estrada> city = cli.parseGrafoCidade("grafoCidade.txt");
-		Gerador g = new Gerador(new Ambulancia(8), 40, city);
+		Gerador g = new Gerador(new Ambulancia(8), 8, city);
 		Rota r = g.geraRota();
 		r.print();
 

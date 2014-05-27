@@ -3,3 +3,5 @@ Anta - B # 4,4 - 3,6
 Guetim - S - 20 # 4,7
 Porto - H - 3 # 1,20
 Barcelos - S - 20 # 4,30 - 3,30
+Maia - H - 5 # 5,7 - 3,15
+Paranhos - S - 20 # 2, 15 - 4,4 - 5,25
