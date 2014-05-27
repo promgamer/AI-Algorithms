@@ -3,6 +3,8 @@ package geneticAlgorithm;
 import java.util.Random;
 import java.util.Vector;
 
+import logic.Clinica;
+
 public class Individuo {
 	
 	private Vector<Integer> genes;
@@ -54,8 +56,11 @@ public class Individuo {
 	
 	/** Obtem (e calcula) a adaptacao de um individuo **/
 	public double getAdaptacao(){
-		if (adaptacao == 0) // calcula adaptacao primeiro, se ainda nao tiver sido calculada
-			adaptacao = Ambiente.calculaAdaptacao(genes);
+		if (adaptacao == 0){ // calcula adaptacao primeiro, se ainda nao tiver sido calculada
+			
+			Ambiente e = new Ambiente(Clinica.getCidade(), genes);
+			adaptacao = e.calculaAdaptacao();
+		}
 		
 		return adaptacao;
 	}

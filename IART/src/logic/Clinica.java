@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -17,8 +18,12 @@ import java.util.Vector;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 
+import org.jgrapht.EdgeFactory;
+import org.jgrapht.WeightedGraph;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.ListenableUndirectedWeightedGraph;
+import org.jgrapht.graph.SimpleWeightedGraph;
+import org.jgrapht.graph.UndirectedWeightedSubgraph;
 
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.swing.mxGraphComponent;
@@ -28,7 +33,7 @@ public class Clinica extends JApplet {
 	private static final long serialVersionUID = 8528919979874509607L;
 
 	Vector<Sucursal> sucursais;
-	public static ListenableUndirectedWeightedGraph<Edificio, Estrada> cidade = null;
+	public static WeightedGraph<Edificio, Estrada> cidade = null;
 	
 	private static final Dimension DEFAULT_SIZE = new Dimension(1024, 728);
 
@@ -77,6 +82,7 @@ public class Clinica extends JApplet {
 
 		Ambiente.setCapacidadeAmbulancia(15);
 		
+		jgxAdapter = new JGraphXAdapter<Edificio, Estrada>(cidade);
 		// create a visualization using JGraph, via an adapter
 		jgxAdapter.setEdgeLabelsMovable(false);
 		jgxAdapter.setAllowDanglingEdges(false);
@@ -89,10 +95,9 @@ public class Clinica extends JApplet {
 
 	}
 
-	public ListenableUndirectedWeightedGraph<Edificio, Estrada> parseGrafoCidade(String filepath) throws IOException{
-		ListenableUndirectedWeightedGraph<Edificio, Estrada> cidade = 
-				new ListenableUndirectedWeightedGraph<Edificio, Estrada>(Estrada.class);
-		jgxAdapter = new JGraphXAdapter<Edificio, Estrada>(cidade);
+	public WeightedGraph<Edificio, Estrada> parseGrafoCidade(String filepath) throws IOException{
+		WeightedGraph<Edificio, Estrada> cidade = new SimpleWeightedGraph<Edificio, Estrada>(Estrada.class);
+		
 
 		Vector<Edificio> edificios = new Vector<Edificio>();
 		Vector<Map<Integer,Integer>> destinos = new Vector<Map<Integer,Integer>>();
@@ -144,8 +149,8 @@ public class Clinica extends JApplet {
 		return cidade;
 	}
 	
-	public static ListenableUndirectedWeightedGraph<Edificio, Estrada> getCidade(){//problema do caralho
-		return cidade;
+	public static Cidade getCidade(){//problema do caralho
+		return new Cidade(cidade);
 	}
 }
 

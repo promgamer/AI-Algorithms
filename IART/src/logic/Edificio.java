@@ -4,7 +4,7 @@ public class Edificio {
 	
 	public static final int DefaultCapacidadeMaxima = 50;
 	
-	protected static int lastID = 0;
+	protected static int lastID = 1;
 	public int ID;
 	public String nome;
 	protected int ocupantes;

@@ -5,6 +5,7 @@ import java.util.Vector;
 
 import logic.Ambulancia;
 import logic.Bomba;
+import logic.Cidade;
 import logic.Clinica;
 import logic.Edificio;
 import logic.Estrada;
@@ -14,27 +15,26 @@ import org.jgrapht.graph.ListenableUndirectedWeightedGraph;
 
 public class Ambiente {
 
-	private static ListenableUndirectedWeightedGraph<Edificio, Estrada> cidade;
+	/** Static Members **/
 	private static int capacidade_ambulancia;
-	private static Ambulancia ambulancia;
 	
 	public static int NoInicial = 1;
 	
+	/** Non-static Members **/
+	private Vector<Integer> rota;
+	private Cidade cidade;
+	private Ambulancia ambulancia;
+	
+	public Ambiente(Cidade c, Vector<Integer> r){
+		this.cidade = c;
+		this.rota = r;
+	}
 	
 	
-	public static double calculaAdaptacao(Vector<Integer> rota) {
+	public double calculaAdaptacao() {
 		
 		// Cria uma nova ambulancia
 		ambulancia = new Ambulancia(capacidade_ambulancia);
-		
-		// cria uma cópia
-		cidade = Clinica.getCidade();
-		ListenableUndirectedWeightedGraph<Edificio, Estrada> cidade2 = Clinica.cidade;
-		
-		
-		if( cidade == cidade2){
-			System.out.println("true");
-		} else System.out.println("false");
 		
 		/* Variaveis de contagem */
 		double pacientes_recolhidos = 0;
@@ -106,7 +106,7 @@ public class Ambiente {
 				//aumenta o contador
 				pacientes_entregues += adicionados;
 				
-			} else { System.out.println("ERRO!: " + idAtual); }
+			} else { System.out.println("ERRO! Classe Inválida"); }
 			
 		} // FIM DO WHILE
 		
@@ -128,7 +128,7 @@ public class Ambiente {
 	 * ligaçoes entre todos os pares de vertices
 	 * 
 	 * **/
-	private static boolean verificaRota(Vector<Integer> rota){
+	private boolean verificaRota(Vector<Integer> rota){
 		
 		for(int i = 0; i < rota.size()-1; i++){
 			
@@ -146,7 +146,7 @@ public class Ambiente {
 		return true;
 	}
 
-	private static Edificio obtemVertice(int ID) {
+	private Edificio obtemVertice(int ID) {
 		Vector<Edificio> edificios = new Vector<>(cidade.vertexSet());
 		
 		for(int i = 0; i < edificios.size(); i++){
@@ -157,7 +157,7 @@ public class Ambiente {
 		return null;
 	}
 	
-	private static int pacientesPorTransportar(){
+	private int pacientesPorTransportar(){
 		Vector<Edificio> edificios = new Vector<>(cidade.vertexSet());
 		
 		int contador = 0;
@@ -174,7 +174,7 @@ public class Ambiente {
 	 * se no momento que a ambulancia visita esta no,
 	 * todos os pacientes foram transportados
 	 * **/
-	private static boolean verificaFimDeRota(Edificio e){
+	private boolean verificaFimDeRota(Edificio e){
 		if(pacientesPorTransportar() == 0 && e instanceof Sucursal && ambulancia.getOcupantes() == 0)
 			return true;
 		
@@ -182,7 +182,7 @@ public class Ambiente {
 	}
 	
 	/** Calcula a distancia percorrida entre dois nos **/
-	private static int calculaDistancia(Edificio N1, Edificio N2){
+	private int calculaDistancia(Edificio N1, Edificio N2){
 		return (int) cidade.getEdgeWeight(cidade.getEdge(N1, N2));
 	}
 	
