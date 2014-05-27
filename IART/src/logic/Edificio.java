@@ -2,9 +2,14 @@ package logic;
 
 public class Edificio {
 	
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+
 	public static final int DefaultCapacidadeMaxima = 50;
 	
-	protected static int lastID = 1;
+	public static int lastID = 1;
 	public int ID;
 	public String nome;
 	protected int ocupantes;

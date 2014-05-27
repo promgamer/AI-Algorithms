@@ -1,5 +1,6 @@
 package geneticAlgorithm;
 
+import java.io.IOException;
 import java.util.Random;
 import java.util.Vector;
 
@@ -17,7 +18,7 @@ public class Individuo {
 	public Individuo(int genesSize, int genesOption){
 		adaptacao = 0;
 		genesOpt = genesOption;
-		genes = new Vector<Integer>(genesSize);
+		genes = new Vector<Integer>();
 		
 		
 		/** Genes random **/
@@ -58,8 +59,17 @@ public class Individuo {
 	public double getAdaptacao(){
 		if (adaptacao == 0){ // calcula adaptacao primeiro, se ainda nao tiver sido calculada
 			
-			Ambiente e = new Ambiente(Clinica.getCidade(), genes);
-			adaptacao = e.calculaAdaptacao();
+			
+			Ambiente e;
+			try {
+				e = new Ambiente(Clinica.parseGrafoCidade("C:\\Users\\Miguel\\Documents\\GitHub\\IART\\IART\\grafoCidade2.txt"), genes);
+				adaptacao = e.calculaAdaptacao();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			
 		}
 		
 		return adaptacao;
@@ -74,10 +84,7 @@ public class Individuo {
 		for(int i = 0; i < genes.size(); i++)
 			System.out.print(genes.elementAt(i) + " ");
 		
-		if(genes.size() == 0)
-			System.out.println("vazio");
-		
-		System.out.println("ola");
+		System.out.println("");
 	}
 
 }

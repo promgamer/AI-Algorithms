@@ -22,12 +22,13 @@ public class Ambiente {
 	
 	/** Non-static Members **/
 	private Vector<Integer> rota;
-	private Cidade cidade;
+	private ListenableUndirectedWeightedGraph<Edificio, Estrada> cidade;
 	private Ambulancia ambulancia;
 	
-	public Ambiente(Cidade c, Vector<Integer> r){
+	@SuppressWarnings("unchecked")
+	public Ambiente(ListenableUndirectedWeightedGraph<Edificio, Estrada> c, Vector<Integer> r){
 		this.cidade = c;
-		this.rota = r;
+		this.rota = (Vector<Integer>) r.clone();
 	}
 	
 	
@@ -40,6 +41,7 @@ public class Ambiente {
 		double pacientes_recolhidos = 0;
 		double pacientes_entregues = 0;
 		double distancia_percorrida = 0;
+		double pacientes_totais = (double) pacientesPorTransportar();
 		
 		/* Variveis de verificacao de rota */
 		int idAtual = NoInicial;
@@ -56,7 +58,7 @@ public class Ambiente {
 		
 
 		// CICLO
-		while(ambulancia.combustivel_restante() != 0 && rota.size() != 0){
+		while(ambulancia.combustivel_restante() > 0 && rota.size() != 0){
 			
 			// Guarda o no atual como antigo
 			idAntigo = idAtual;
@@ -67,18 +69,19 @@ public class Ambiente {
 			if(idAntigo == idAtual)
 				continue;
 
-			
 			Edificio e = obtemVertice(idAtual);
 			
-			
 			//calcula a distancia percorrida
-			distancia_percorrida += calculaDistancia(obtemVertice(idAntigo), e);
+			double distancia = calculaDistancia(obtemVertice(idAntigo), e);
+			ambulancia.consumir(distancia);
+			distancia_percorrida += distancia;
 			
 			// Verifica se é fim de rota
 			if( verificaFimDeRota(e) == true ){
-				System.out.println("break");
+				System.out.println("FIM DE ROTA");
 				break;
 			}
+
 				
 			
 			/** Verifica as habitações e faz ações consoante o seu tipo **/
@@ -99,21 +102,21 @@ public class Ambiente {
 				ambulancia.abastecer();
 				
 			} else if( e instanceof Sucursal ){
-				System.out.println("aqui");
 				int adicionados = ((Sucursal) e).adicionaOcupantes( ambulancia.getOcupantes() );
 				ambulancia.retirar(adicionados);
 				
 				//aumenta o contador
 				pacientes_entregues += adicionados;
 				
-			} else { System.out.println("ERRO! Classe Inválida"); }
+			} else { System.out.println("ERRO! Classe Inválida: " + e.getClass()); }
 			
 		} // FIM DO WHILE
 		
 		// Calcula o fitness deste individuo
 		double fitness;
+		
 		if(distancia_percorrida != 0)
-			 fitness = (pacientes_entregues + pacientes_recolhidos) / distancia_percorrida;
+			 fitness = 0.6 * pacientes_entregues + 0.4*pacientes_recolhidos - 0.2 * distancia_percorrida;
 		else fitness = 0;
 		
 		System.out.println("entregues:" + pacientes_entregues +" ; recolhidos: " + pacientes_recolhidos + "; distancia: " + distancia_percorrida + " ; fitness: " + fitness);
@@ -138,7 +141,6 @@ public class Ambiente {
 			
 			// verifica se existe uma ligacao entre os dois edificios
 			if( !cidade.containsEdge(e1,e2) && e1 != null && e2 != null ){
-				System.out.println("E1: " + e1.nome + "  E2: " + e2.nome);
 				return false;
 			}
 		}

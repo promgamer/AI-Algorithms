@@ -1,10 +1,10 @@
 package logic;
 
 public class Ambulancia {
-	final static int combustivel_max = 30;
+	final static double combustivel_max = 4;
 	final int capacidade_ocupantes;
 	private int nrOcupantes;
-	private float combustivel;
+	private double combustivel;
 	
 	public Ambulancia(int capacidade){
 		capacidade_ocupantes = capacidade;
@@ -16,11 +16,11 @@ public class Ambulancia {
 		combustivel = combustivel_max;
 	}
 	
-	public void consumir(int km){
+	public void consumir(double km){
 		combustivel -= km;
 	}
 	
-	public float combustivel_restante(){
+	public double combustivel_restante(){
 		return combustivel;
 	}
 	

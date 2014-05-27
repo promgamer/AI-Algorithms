@@ -8,7 +8,7 @@ public class Populacao {
 	
 	/** Construtor para gerar uma populacao **/
 	public Populacao(int tamanhoPopulacao, int tamanhoGenes, int opcoesGenes){
-		individuos = new Vector<Individuo>(tamanhoPopulacao);
+		individuos = new Vector<Individuo>();
 		
 		/** Cria Individuos para essa populuacao **/
 		 for (int i = 0; i < tamanhoPopulacao; i++) {
@@ -19,7 +19,7 @@ public class Populacao {
 	
 	/** Construtor para criar uma populacao vazia **/
 	public Populacao(int tamanhoPopulacao){
-		individuos = new Vector<Individuo>(tamanhoPopulacao);
+		individuos = new Vector<Individuo>();
 	}
 	
 	/** Obtem um individuo na populacao **/
@@ -44,12 +44,10 @@ public class Populacao {
 		Individuo melhor = individuos.elementAt(0);
 		
 		for (int i = 0; i < individuos.size(); i++) {
-			
             if (melhor.getAdaptacao() < individuos.elementAt(i).getAdaptacao()) {
                 melhor = individuos.elementAt(i);
             }
         }
-		
 		return melhor;
 	}
 
