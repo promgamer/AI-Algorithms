@@ -116,7 +116,8 @@ public class Ambiente {
 		double fitness;
 		
 		if(distancia_percorrida != 0)
-			 fitness = 0.6 * pacientes_entregues + 0.4*pacientes_recolhidos - 0.2 * distancia_percorrida;
+			 //fitness = 0.6 * pacientes_entregues + 0.4*pacientes_recolhidos - 0.2 * distancia_percorrida;
+			fitness = ((pacientes_recolhidos /pacientes_totais) - ((pacientes_recolhidos - pacientes_entregues) / pacientes_totais)) / distancia_percorrida;
 		else fitness = 0;
 		
 		System.out.println("entregues:" + pacientes_entregues +" ; recolhidos: " + pacientes_recolhidos + "; distancia: " + distancia_percorrida + " ; fitness: " + fitness);
