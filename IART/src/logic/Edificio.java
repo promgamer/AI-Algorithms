@@ -26,6 +26,14 @@ public class Edificio {
 		ID = lastID++;
 	}
 	
+	/** Construtor de cópia **/
+	public Edificio(Edificio e) {
+		this.nome = e.nome;
+		this.ID = e.ID;
+		this.ocupantes = e.getOcupantes();
+		this.capacidadeMaxima = e.getCapacidade();
+	}
+	
 	/** Obtem o numero de ocupantes de um edificio **/
 	public int getOcupantes(){
 		return ocupantes;
