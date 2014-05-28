@@ -3,8 +3,6 @@ package simulated.annealing;
 import java.util.Vector;
 
 import logic.Edificio;
-import logic.Habitacao;
-import logic.Sucursal;
 
 public class Rota {
 	private Vector<Edificio> rota = null;

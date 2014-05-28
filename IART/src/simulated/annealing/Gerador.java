@@ -2,10 +2,7 @@ package simulated.annealing;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.Vector;
-
-import org.jgrapht.graph.ListenableUndirectedWeightedGraph;
 
 import logic.Ambulancia;
 import logic.Bomba;
@@ -15,23 +12,27 @@ import logic.Estrada;
 import logic.Habitacao;
 import logic.Sucursal;
 
+import org.jgrapht.graph.ListenableUndirectedWeightedGraph;
+
 public class Gerador {
 
 	private Ambulancia ambulanciaInicial = null;
 	private Ambulancia ambulancia = null;
 	private int nrPacientesInciais = 0;
 	private int nrPacientesRestantes = 0;
+	private String graphPath = null;
 	private ListenableUndirectedWeightedGraph<Edificio, Estrada> cidade = null;
 
-	public Gerador(Ambulancia ambulancia, int nrPacientes, ListenableUndirectedWeightedGraph<Edificio, Estrada> cidade){
+	public Gerador(Ambulancia ambulancia, int nrPacientes, String graphPath) throws IOException{
 		this.ambulanciaInicial  = ambulancia.clone();
 		this.ambulancia = ambulancia.clone();
 		this.nrPacientesInciais = nrPacientes;
 		this.nrPacientesRestantes = nrPacientes;
-		this.cidade = cidade;
+		this.graphPath = graphPath;
+		this.cidade = Clinica.parseGrafoCidade(graphPath);
 	}
 
-	public Rota geraRota() {
+	public Rota geraRota() throws IOException {
 
 		Rota rota = new Rota();
 		Edificio atual = null;
@@ -51,6 +52,7 @@ public class Gerador {
 		do{
 			/* Estatísticas
 			System.out.println("Combustível Disponível: "+ambulancia.combustivel_restante());
+			System.out.println("Pacientes na ambulancia: "+ambulancia.getOcupantes());
 			System.out.println("Nr. Pacientes Restantes: "+nrPacientesRestantes);
 			System.out.println(" - - - - - - - - - - - - - - ");
 			*/
@@ -196,17 +198,17 @@ public class Gerador {
 		return max;
 	}
 
-	private void reset() {
+	private void reset() throws IOException {
 		this.ambulancia = ambulanciaInicial.clone();
+		this.cidade = Clinica.parseGrafoCidade(graphPath);
 		nrPacientesRestantes = nrPacientesInciais;
 	}
 
 	public static void main(String[] args) throws IOException{
-		ListenableUndirectedWeightedGraph<Edificio, Estrada> city = Clinica.parseGrafoCidade("grafoCidade.txt");
-		Gerador g = new Gerador(new Ambulancia(8), 8, city);
+		Gerador g = new Gerador(new Ambulancia(8), 8, "grafoCidade.txt");
 		//Rota r = g.geraRota();
 		//r.print();
-		SimulatedAnnealing sm = new SimulatedAnnealing(100, 0.03, 2, g);
+		SimulatedAnnealing sm = new SimulatedAnnealing(10000, 0.003, 0.01, g);
 		sm.run();
 	}
 }
