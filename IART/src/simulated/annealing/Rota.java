@@ -3,6 +3,8 @@ package simulated.annealing;
 import java.util.Vector;
 
 import logic.Edificio;
+import logic.Habitacao;
+import logic.Sucursal;
 
 public class Rota {
 	private Vector<Edificio> rota = null;
@@ -38,7 +40,7 @@ public class Rota {
 		for(int i=0; i<rota.size(); i++){
 			System.out.println(rota.elementAt(i).ID + " - " + rota.elementAt(i).nome);
 		}
-		
+		System.out.println("Distancia Total: "+distanciaTotal);
 	}
 	
 }

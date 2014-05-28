@@ -3,6 +3,7 @@ package simulated.annealing;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.Vector;
 
 import org.jgrapht.graph.ListenableUndirectedWeightedGraph;
 
@@ -25,7 +26,8 @@ public class Gerador {
 	public Gerador(Ambulancia ambulancia, int nrPacientes, ListenableUndirectedWeightedGraph<Edificio, Estrada> cidade){
 		this.ambulanciaInicial  = ambulancia.clone();
 		this.ambulancia = ambulancia.clone();
-		this.nrPacientesInciais = this.nrPacientesRestantes = nrPacientes;
+		this.nrPacientesInciais = nrPacientes;
+		this.nrPacientesRestantes = nrPacientes;
 		this.cidade = cidade;
 	}
 
@@ -34,15 +36,12 @@ public class Gerador {
 		Rota rota = new Rota();
 		Edificio atual = null;
 
-		System.out.println("................................");
 		//Escolher edificio inicial -> tem de ser uma sucursal(apenas sucursais têm garagem e a ambulancia)
 		do{
 			ArrayList<Edificio> edificios = new ArrayList<Edificio>( cidade.vertexSet() );
 			int rng = (int)(Math.random() * edificios.size());
 			atual = edificios.get( rng );
-			System.out.println("DEBUG : "+"Selecao inicial - "+atual.nome+" "+atual.getOcupantes()+" "+atual.getEspacoDisponivel());
 		}while(!(atual instanceof Sucursal));
-		System.out.println("................................");
 		
 		/* ---- Fazer a rota até todos os pacientes estarem em sucursais ---- */
 		
@@ -50,7 +49,13 @@ public class Gerador {
 		boolean prioridadeSucursal = false, prioridadeBomba = false;
 		
 		do{
-			System.out.println("============PROCESSAMENTO=============");
+			/* Estatísticas
+			System.out.println("Combustível Disponível: "+ambulancia.combustivel_restante());
+			System.out.println("Nr. Pacientes Restantes: "+nrPacientesRestantes);
+			System.out.println(" - - - - - - - - - - - - - - ");
+			*/
+			
+			// todas as estradas que saem do edificio
 			ArrayList<Estrada> estradas = new ArrayList<Estrada>( cidade.edgesOf(atual) );
 
 			//obter o maximo de distancia possivel percorrer nos proximos 2 nós -> previsão de combustivel
@@ -61,57 +66,52 @@ public class Gerador {
 			if(atual instanceof Habitacao){
 				if(!ambulancia.ocupar(atual.getOcupantes())){
 					int esp = ambulancia.getEspacoDisponivel();
-					System.out.println("DEBUG : "+"Avaliou Habitacao_if (antes retirar) - "+atual.nome+" "+atual.getOcupantes()+" "+atual.getEspacoDisponivel());
 					atual.retirarOcupantes(esp);
-					System.out.println("DEBUG : "+"Avaliou Habitacao_if (apos retirar) - "+atual.nome+" "+atual.getOcupantes()+" "+atual.getEspacoDisponivel());
 					ambulancia.ocupar(esp);
 					prioridadeSucursal = true;
 				} else{
-					System.out.println("DEBUG : "+"Avaliou Habitacao_else (antes retirar) - "+atual.nome+" "+atual.getOcupantes()+" "+atual.getEspacoDisponivel());
 					atual.esvaziaEdificio();
-					System.out.println("DEBUG : "+"Avaliou Habitacao_else (apos retirar) - "+atual.nome+" "+atual.getOcupantes()+" "+atual.getEspacoDisponivel());
 					if(ambulancia.getEspacoDisponivel() == 0)
 						prioridadeSucursal = true;
 				}
 			} else if (atual instanceof Sucursal){
-				int nPacientes = 0;
+				int nOcupantes=0, espDisponivel=0;
 				/* parece desnecessário mas é essencial o controlo
 				  devido à sucursal poder não ter espaço suficiente */
-				if((nPacientes=atual.getEspacoDisponivel()) < ambulancia.getOcupantes()){
-					System.out.println("DEBUG : "+"Avaliou Sucursal_if (antes adicionar) - "+atual.nome+" "+atual.getOcupantes()+" "+atual.getEspacoDisponivel());
-					ambulancia.retirar(nPacientes);
-					((Sucursal) atual).adicionaOcupantes(nPacientes);
-					System.out.println("DEBUG : "+"Avaliou Sucursal_if (apos adicionar) - "+atual.nome+" "+atual.getOcupantes()+" "+atual.getEspacoDisponivel());
+				if((espDisponivel=atual.getEspacoDisponivel()) < (nOcupantes=ambulancia.getOcupantes())){
+					ambulancia.retirar(espDisponivel);
+					((Sucursal) atual).adicionaOcupantes(espDisponivel);
+					nrPacientesRestantes -= espDisponivel;
 				}
 				else {
-					ambulancia.retirar(nPacientes);
-					System.out.println("DEBUG : "+"Avaliou Sucursal_else (antes adicionar) - "+atual.nome+" "+atual.getOcupantes()+" "+atual.getEspacoDisponivel());
-					((Sucursal) atual).adicionaOcupantes(nPacientes);
-					System.out.println("DEBUG : "+"Avaliou Sucursal_else (apos adicionar) - "+atual.nome+" "+atual.getOcupantes()+" "+atual.getEspacoDisponivel());
+					ambulancia.retirar(nOcupantes);
+					((Sucursal) atual).adicionaOcupantes(nOcupantes);
+					nrPacientesRestantes -= nOcupantes;
 				}
-				nrPacientesRestantes -= nPacientes;
 			} else if(atual instanceof Bomba){
-				System.out.println("DEBUG : "+"Avaliou Bomba - "+atual.nome+" "+atual.getOcupantes()+" "+atual.getEspacoDisponivel());
 				ambulancia.abastecer();
 				prioridadeBomba = false;
 			}
 			
-			System.out.println("DEBUG : "+"Adicao Edificio à Rota (antes adicionar) - "+atual.nome+" "+atual.getOcupantes()+" "+atual.getEspacoDisponivel());
 			rota.adicionarEdificio(new Edificio(atual)); // adicionar o edificio atual à rota antes de progredir
-			System.out.println("DEBUG : "+"Adicao Edificio à Rota (depois adicionar) - "+atual.nome+" "+atual.getOcupantes()+" "+atual.getEspacoDisponivel());
-			System.out.println("DEBUG : "+"Rota Atual - "+rota.getRota());
 			
-			System.out.println("==========================================");
-			System.out.println(" --------------  GERAÇÃO  --------------- ");
 			boolean gotIt = false;
+			double cons=0;
 			if( prioridadeBomba ){ // escolhe a 1a Bomba disponivel
 				for(int i = 0; i < estradas.size(); i++){
-					Edificio edf = cidade.getEdgeTarget(estradas.get(i));
-					if(edf instanceof Bomba){
-						System.out.println("DEBUG : "+"Prioridade Bomba (antes adicionar) - "+atual.nome+" "+atual.getOcupantes()+" "+atual.getEspacoDisponivel());
-						atual = edf;
-						System.out.println("DEBUG : "+"Prioridade Bomba (depois adicionar) - "+atual.nome+" "+atual.getOcupantes()+" "+atual.getEspacoDisponivel());
-						rota.addDistancia(cidade.getEdgeWeight(estradas.get(i)));
+					Edificio edfT = cidade.getEdgeTarget(estradas.get(i));
+					Edificio edfS = cidade.getEdgeSource(estradas.get(i));
+					if(edfT instanceof Bomba && edfT != atual){
+						atual = edfT;
+						rota.addDistancia((cons=cidade.getEdgeWeight(estradas.get(i))));
+						
+						gotIt = true;
+						prioridadeBomba = false;
+						break;
+					}
+					else if(edfS instanceof Bomba && edfS != atual){
+						atual = edfS;
+						rota.addDistancia((cons=cidade.getEdgeWeight(estradas.get(i))));
 						gotIt = true;
 						prioridadeBomba = false;
 						break;
@@ -120,14 +120,22 @@ public class Gerador {
 			}
 			else if( prioridadeSucursal ){// escolhe a 1a Sucursal com espaço disponivel
 				for(int i = 0; i < estradas.size(); i++){
-					Edificio edf = cidade.getEdgeTarget(estradas.get(i));
-					if(edf instanceof Sucursal){
-						if(edf.getEspacoDisponivel() == 0)
+					Edificio edfT = cidade.getEdgeTarget(estradas.get(i));
+					Edificio edfS = cidade.getEdgeSource(estradas.get(i));
+					if(edfT instanceof Sucursal && edfT != atual){
+						if(edfT.getEspacoDisponivel() == 0)
 							continue;
-						System.out.println("DEBUG : "+"Prioridade Sucursal (antes adicionar) - "+atual.nome+" "+atual.getOcupantes()+" "+atual.getEspacoDisponivel());
-						atual = edf;
-						System.out.println("DEBUG : "+"Prioridade Sucursal (depois adicionar) - "+atual.nome+" "+atual.getOcupantes()+" "+atual.getEspacoDisponivel());
-						rota.addDistancia(cidade.getEdgeWeight(estradas.get(i)));
+						atual = edfT;
+						rota.addDistancia((cons=cidade.getEdgeWeight(estradas.get(i))));
+						gotIt = true;
+						prioridadeSucursal = false;
+						break;
+					}
+					else if(edfS instanceof Sucursal && edfS != atual){
+						if(edfS.getEspacoDisponivel() == 0)
+							continue;
+						atual = edfS;
+						rota.addDistancia((cons=cidade.getEdgeWeight(estradas.get(i))));
 						gotIt = true;
 						prioridadeSucursal = false;
 						break;
@@ -138,19 +146,31 @@ public class Gerador {
 			if( !gotIt ){
 				Edificio temp = null;
 				int rng2;
+				Vector<Edificio> tmpEdfs = new Vector<Edificio>();
+				
+				//Procura todos os nos possiveis para proximos
+				for(int i=0; i<estradas.size(); i++){
+					Edificio e1 = cidade.getEdgeTarget(estradas.get(i)),
+							e2 = cidade.getEdgeSource(estradas.get(i));
+					if(e1 != atual) tmpEdfs.add(e1);
+					else tmpEdfs.add(e2);
+				}
+				
 				do{
-					rng2 = (int)(Math.random() * estradas.size());
-					temp = cidade.getEdgeTarget(estradas.get(rng2));
-					System.out.println("DEBUG : "+"Edificio Random Gen - "+temp.nome+" "+temp.getOcupantes()+" "+temp.getEspacoDisponivel());
+					rng2 = (int)(Math.random() * tmpEdfs.size());
+					temp = tmpEdfs.get(rng2);
 				}while(atual == temp );
-				System.out.println("DEBUG : "+"Final Gen (antes adicionar) - "+atual.nome+" "+atual.getOcupantes()+" "+atual.getEspacoDisponivel());
 				atual = temp;
-				System.out.println("DEBUG : "+"Final Gen (depois adicionar) - "+atual.nome+" "+atual.getOcupantes()+" "+atual.getEspacoDisponivel());
-				rota.addDistancia(cidade.getEdgeWeight(estradas.get(rng2)));
+				rota.addDistancia((cons=cidade.getEdgeWeight(estradas.get(rng2))));
 			}
-			System.out.println("---------------------------------------");
+			ambulancia.consumir(cons);
 		}while(nrPacientesRestantes > 0);
-
+		
+		/* Estatísticas Finais
+		System.out.println("Combustível Disponível: "+ambulancia.combustivel_restante());
+		System.out.println("Nr. Pacientes Restantes: "+nrPacientesRestantes);
+		System.out.println(" - - - - - - - - - - - - - - ");
+		*/
 		reset();
 		return rota;
 	}
@@ -160,7 +180,9 @@ public class Gerador {
 
 		for( Estrada e : cidade.edgesOf(atual) ){
 			double t = cidade.getEdgeWeight(e);
-			Edificio edf = cidade.getEdgeTarget(e);
+			Edificio edf=null;
+			if((edf = cidade.getEdgeTarget(e)) == atual)
+				edf = cidade.getEdgeSource(e);
 
 			double t2 = 0;
 			for(Estrada e2 : cidade.edgesOf(edf)){
@@ -180,11 +202,11 @@ public class Gerador {
 	}
 
 	public static void main(String[] args) throws IOException{
-		Clinica cli = new Clinica();
-		ListenableUndirectedWeightedGraph<Edificio, Estrada> city = cli.parseGrafoCidade("grafoCidade.txt");
+		ListenableUndirectedWeightedGraph<Edificio, Estrada> city = Clinica.parseGrafoCidade("grafoCidade.txt");
 		Gerador g = new Gerador(new Ambulancia(8), 8, city);
-		Rota r = g.geraRota();
-		r.print();
-
+		//Rota r = g.geraRota();
+		//r.print();
+		SimulatedAnnealing sm = new SimulatedAnnealing(100, 0.03, 2, g);
+		sm.run();
 	}
 }
