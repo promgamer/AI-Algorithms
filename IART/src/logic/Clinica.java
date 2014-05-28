@@ -59,9 +59,9 @@ public class Clinica extends JApplet {
 		/* Calculos do algoritmo genetico */
 		int contador = 1;
 		
-		Populacao pop = new Populacao(50, 8, cidade.vertexSet().size());;
+		Populacao pop = new Populacao(50, 12, cidade.vertexSet().size());;
 		
-		while( contador != 150){
+		while( contador != 200){
 			pop = EvoluiPopulacao.evoluiPopulacao(pop);
 			
 			
@@ -76,7 +76,7 @@ public class Clinica extends JApplet {
 	public void init(String filepath) throws IOException {
 		cidade = parseGrafoCidade(filepath);
 
-		Ambiente.setCapacidadeAmbulancia(15);
+		Ambiente.setCapacidadeAmbulancia(10);
 		
 		jgxAdapter = new JGraphXAdapter<Edificio, Estrada>(cidade);
 		// create a visualization using JGraph, via an adapter

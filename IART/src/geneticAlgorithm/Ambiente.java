@@ -41,21 +41,10 @@ public class Ambiente {
 		double pacientes_recolhidos = 0;
 		double pacientes_entregues = 0;
 		double distancia_percorrida = 0;
-		double pacientes_totais = (double) pacientesPorTransportar();
 		
 		/* Variveis de verificacao de rota */
 		int idAtual = NoInicial;
 		int idAntigo;
-		
-		
-		// Verifica se a rota é possivel
-		// isto é, se existem edges que ligam os vertices
-		// se a rota é inválida, então este é um mau individuo neste ambiente
-		if( verificaRota(rota) == false){
-			System.out.println("Vai sair");
-			return 0;
-		}
-		
 
 		// CICLO
 		while(ambulancia.combustivel_restante() > 0 && rota.size() != 0){
@@ -71,10 +60,18 @@ public class Ambiente {
 
 			Edificio e = obtemVertice(idAtual);
 			
+			//Verifica se existe uma ligacao entre os dois edificios
+			if( !cidade.containsEdge(obtemVertice(idAntigo), e) )
+				break;
+			
 			//calcula a distancia percorrida
 			double distancia = calculaDistancia(obtemVertice(idAntigo), e);
 			ambulancia.consumir(distancia);
 			distancia_percorrida += distancia;
+			
+			//verificação dupla da distancia
+			if( ambulancia.combustivel_restante() < 0)
+				break;
 			
 			// Verifica se é fim de rota
 			if( verificaFimDeRota(e) == true ){
@@ -116,8 +113,7 @@ public class Ambiente {
 		double fitness;
 		
 		if(distancia_percorrida != 0)
-			 //fitness = 0.6 * pacientes_entregues + 0.4*pacientes_recolhidos - 0.2 * distancia_percorrida;
-			fitness = ((pacientes_recolhidos /pacientes_totais) - ((pacientes_recolhidos - pacientes_entregues) / pacientes_totais)) / distancia_percorrida;
+			fitness = 1 * pacientes_recolhidos + 1.5 * pacientes_entregues - 0.5 * distancia_percorrida - 3 * pacientesPorTransportar();
 		else fitness = 0;
 		
 		System.out.println("entregues:" + pacientes_entregues +" ; recolhidos: " + pacientes_recolhidos + "; distancia: " + distancia_percorrida + " ; fitness: " + fitness);
@@ -126,29 +122,6 @@ public class Ambiente {
 		
 	}
 	
-	/** Verifica se uma rota é valida 
-	 * 
-	 * Para uma rota ser válida, é necessário que existam
-	 * ligaçoes entre todos os pares de vertices
-	 * 
-	 * **/
-	private boolean verificaRota(Vector<Integer> rota){
-		
-		for(int i = 0; i < rota.size()-1; i++){
-			
-			//obtem um par de vertices
-			Edificio e1 = obtemVertice(i);
-			Edificio e2 = obtemVertice(i+1);
-			
-			// verifica se existe uma ligacao entre os dois edificios
-			if( !cidade.containsEdge(e1,e2) && e1 != null && e2 != null ){
-				return false;
-			}
-		}
-		
-		return true;
-	}
-
 	private Edificio obtemVertice(int ID) {
 		Vector<Edificio> edificios = new Vector<>(cidade.vertexSet());
 		
