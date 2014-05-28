@@ -1,5 +1,7 @@
 package simulated.annealing;
 
+import java.io.IOException;
+
 public class SimulatedAnnealing {
 	private double temperaturaAtual = 0, temperaturaFinal = 0;
 	private double taxaArrefecimento = 0;
@@ -21,13 +23,13 @@ public class SimulatedAnnealing {
         return Math.exp((energiaSolucaoAtual - energiaNovaSolucao) / temperatura);
     }
 	
-	public void run(){
+	public void run() throws IOException{
 		Rota solucaoAtual = gerador.geraRota();
 		Rota melhorSolucao = new Rota(solucaoAtual);
 		
 		do {
 			Rota novaSolucao = gerador.geraRota();
-
+			
             double energiaSolucaoAtual = solucaoAtual.getDistanciaTotal();
             double energiaNovaSolucao = novaSolucao.getDistanciaTotal();
 
@@ -41,7 +43,14 @@ public class SimulatedAnnealing {
             }
             
             temperaturaAtual *= 1-taxaArrefecimento;
+            //System.out.println("Temperatura: " + temperaturaAtual);
 		} while( temperaturaAtual > temperaturaFinal);
+		
+		System.out.println("Melhor Solucao:");
+		melhorSolucao.print();
+		
+		System.out.println("\nSolucao Atual:");
+		solucaoAtual.print();
 	}
 	
 }
