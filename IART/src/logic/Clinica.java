@@ -4,29 +4,19 @@ import geneticAlgorithm.Ambiente;
 import geneticAlgorithm.EvoluiPopulacao;
 import geneticAlgorithm.Individuo;
 import geneticAlgorithm.Populacao;
-
 import java.awt.Dimension;
-import java.awt.event.KeyListener;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
-
 import javax.swing.JApplet;
 import javax.swing.JFrame;
-
-import org.jgrapht.EdgeFactory;
 import org.jgrapht.Graphs;
-import org.jgrapht.WeightedGraph;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.ListenableUndirectedWeightedGraph;
-import org.jgrapht.graph.SimpleWeightedGraph;
-import org.jgrapht.graph.UndirectedWeightedSubgraph;
-
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.swing.mxGraphComponent;
 
@@ -59,16 +49,24 @@ public class Clinica extends JApplet {
 		/* Calculos do algoritmo genetico */
 		int contador = 1;
 		
-		Populacao pop = new Populacao(50, 12, cidade.vertexSet().size());;
+		int tamanhoPopulacao = 50;
+		int tamanhoGenes = 12;
+		Populacao pop = new Populacao(tamanhoPopulacao, tamanhoGenes, cidade.vertexSet().size());;
 		
 		while( contador != 200){
 			pop = EvoluiPopulacao.evoluiPopulacao(pop);
 			
 			
-			System.out.println("Geracao " + contador + ": " + pop.getMelhorAdaptado().toString() + " : ");
+			System.out.print("Geracao " + contador + ": " + pop.getMelhorAdaptado().toString() + " : ");
 			pop.getMelhorAdaptado().imprimeGenes();
 			contador++;
-		}		
+		}	
+		
+		// Obtem o melhor individuo
+		Individuo melhor = pop.getMelhorAdaptado();
+		Ambiente e = new Ambiente(melhor.getGenes(), true);
+		e.calculaAdaptacao();
+		e.imprimeMelhor();
 	
 	}
 
@@ -76,6 +74,7 @@ public class Clinica extends JApplet {
 	public void init(String filepath) throws IOException {
 		cidade = parseGrafoCidade(filepath);
 
+		Ambiente.setGraphPath(filepath);
 		Ambiente.setCapacidadeAmbulancia(10);
 		
 		jgxAdapter = new JGraphXAdapter<Edificio, Estrada>(cidade);
@@ -91,7 +90,7 @@ public class Clinica extends JApplet {
 
 	}
 
-	public static ListenableUndirectedWeightedGraph<Edificio, Estrada> parseGrafoCidade(String filepath) throws IOException{
+	public static ListenableUndirectedWeightedGraph<Edificio, Estrada> parseGrafoCidade(String filepath){
 		ListenableUndirectedWeightedGraph<Edificio, Estrada> cidade = new ListenableUndirectedWeightedGraph<Edificio, Estrada>(Estrada.class);
 		
 
@@ -100,34 +99,50 @@ public class Clinica extends JApplet {
 		
 		Edificio.lastID = 1; //stupid hardedcoded line
 
-		BufferedReader reader = new BufferedReader(new FileReader(filepath));
-		String line = null;
-		while ((line = reader.readLine()) != null) {
-			String [] split = line.split(" # ");
-			String [] infoEdificio = split[0].trim().split(" - "); // Nome - Tipo - Capacidade
-			Edificio novoEdf = null;
-			if(infoEdificio[1].trim().equals("S")){
-				novoEdf = new Sucursal(infoEdificio[0].trim(), Integer.parseInt(infoEdificio[2].trim()));
-			}else if(infoEdificio[1].trim().equals("B")){
-				novoEdf = new Bomba(infoEdificio[0].trim());
-			}else if(infoEdificio[1].trim().equals("H")){
-				novoEdf = new Habitacao(infoEdificio[0].trim(), Integer.parseInt(infoEdificio[2].trim()));
-			}else{
-				System.out.println("Error on file parsing - Invalid Syntax!");
-				reader.close();
-				return null;
-			}
-			edificios.add(novoEdf);
-
-			String [] infoDestinos = split[1].trim().split(" - "); // idEdifico,Distancia - ....
-			Map<Integer, Integer> destinosAux = new HashMap<Integer,Integer>();
-			for(String info : infoDestinos){
-				String[] specific = info.trim().split(",");
-				destinosAux.put(Integer.parseInt(specific[0].trim()), Integer.parseInt(specific[1].trim()));
-			}
-			destinos.add(destinosAux);
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(filepath));
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
-		reader.close();
+		String line = null;
+		try {
+			while ((line = reader.readLine()) != null) {
+				String [] split = line.split(" # ");
+				String [] infoEdificio = split[0].trim().split(" - "); // Nome - Tipo - Capacidade
+				Edificio novoEdf = null;
+				if(infoEdificio[1].trim().equals("S")){
+					novoEdf = new Sucursal(infoEdificio[0].trim(), Integer.parseInt(infoEdificio[2].trim()));
+				}else if(infoEdificio[1].trim().equals("B")){
+					novoEdf = new Bomba(infoEdificio[0].trim());
+				}else if(infoEdificio[1].trim().equals("H")){
+					novoEdf = new Habitacao(infoEdificio[0].trim(), Integer.parseInt(infoEdificio[2].trim()));
+				}else{
+					System.out.println("Error on file parsing - Invalid Syntax!");
+					reader.close();
+					return null;
+				}
+				edificios.add(novoEdf);
+
+				String [] infoDestinos = split[1].trim().split(" - "); // idEdifico,Distancia - ....
+				Map<Integer, Integer> destinosAux = new HashMap<Integer,Integer>();
+				for(String info : infoDestinos){
+					String[] specific = info.trim().split(",");
+					destinosAux.put(Integer.parseInt(specific[0].trim()), Integer.parseInt(specific[1].trim()));
+				}
+				destinos.add(destinosAux);
+			}
+		} catch (NumberFormatException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			reader.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		//Build Graph
 		for(Edificio edf : edificios){

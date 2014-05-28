@@ -2,6 +2,7 @@ package logic;
 
 public class Ambulancia {
 	final static double combustivel_max = 10;
+
 	final int capacidade_ocupantes;
 	private int nrOcupantes;
 	private double combustivel;

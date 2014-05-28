@@ -7,7 +7,7 @@ import java.util.Vector;
 import logic.Clinica;
 
 public class Individuo {
-	
+		
 	private Vector<Integer> genes;
 	private static int genesOpt;
 	
@@ -52,24 +52,15 @@ public class Individuo {
 	/** Obtem o tamanho do vetor **/
 	public int getSize(){
 		return genes.size();
-	}
-	
+	}	
 	
 	/** Obtem (e calcula) a adaptacao de um individuo **/
 	public double getAdaptacao(){
 		if (adaptacao == 0){ // calcula adaptacao primeiro, se ainda nao tiver sido calculada
 			
-			
-			Ambiente e;
-			try {
-				e = new Ambiente(Clinica.parseGrafoCidade("C:\\Users\\Miguel\\Documents\\GitHub\\IART\\IART\\grafoCidade2.txt"), genes);
-				adaptacao = e.calculaAdaptacao();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
-			
+			Ambiente e = new Ambiente(genes);
+			adaptacao = e.calculaAdaptacao();
+				
 		}
 		
 		return adaptacao;
@@ -85,6 +76,10 @@ public class Individuo {
 			System.out.print(genes.elementAt(i) + " ");
 		
 		System.out.println("");
+	}
+
+	public Vector<Integer> getGenes() {
+		return genes;
 	}
 
 }
