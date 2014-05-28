@@ -6,9 +6,11 @@ import geneticAlgorithm.Individuo;
 import geneticAlgorithm.Populacao;
 
 import java.awt.Dimension;
+import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -17,8 +19,13 @@ import java.util.Vector;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 
+import org.jgrapht.EdgeFactory;
+import org.jgrapht.Graphs;
+import org.jgrapht.WeightedGraph;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.ListenableUndirectedWeightedGraph;
+import org.jgrapht.graph.SimpleWeightedGraph;
+import org.jgrapht.graph.UndirectedWeightedSubgraph;
 
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.swing.mxGraphComponent;
@@ -52,22 +59,16 @@ public class Clinica extends JApplet {
 		/* Calculos do algoritmo genetico */
 		int contador = 1;
 		
-		Populacao pop = new Populacao(4, 8, cidade.vertexSet().size());;
+		Populacao pop = new Populacao(50, 8, cidade.vertexSet().size());;
 		
-		/*
-		while( contador != 2){
+		while( contador != 150){
 			pop = EvoluiPopulacao.evoluiPopulacao(pop);
 			
 			
-			System.out.println("Geracao " + contador + ": " + pop.getMelhorAdaptado().toString());
+			System.out.println("Geracao " + contador + ": " + pop.getMelhorAdaptado().toString() + " : ");
+			pop.getMelhorAdaptado().imprimeGenes();
 			contador++;
-		}*/
-		
-		for(int i = 0; i < pop.getSize(); i++)
-			pop.getIndividuo(i).imprimeGenes();
-		
-		pop.getMelhorAdaptado().imprimeGenes();
-		//pop.getMelhorAdaptado().toString();
+		}		
 	
 	}
 
@@ -77,6 +78,7 @@ public class Clinica extends JApplet {
 
 		Ambiente.setCapacidadeAmbulancia(15);
 		
+		jgxAdapter = new JGraphXAdapter<Edificio, Estrada>(cidade);
 		// create a visualization using JGraph, via an adapter
 		jgxAdapter.setEdgeLabelsMovable(false);
 		jgxAdapter.setAllowDanglingEdges(false);
@@ -89,13 +91,14 @@ public class Clinica extends JApplet {
 
 	}
 
-	public ListenableUndirectedWeightedGraph<Edificio, Estrada> parseGrafoCidade(String filepath) throws IOException{
-		ListenableUndirectedWeightedGraph<Edificio, Estrada> cidade = 
-				new ListenableUndirectedWeightedGraph<Edificio, Estrada>(Estrada.class);
-		jgxAdapter = new JGraphXAdapter<Edificio, Estrada>(cidade);
+	public static ListenableUndirectedWeightedGraph<Edificio, Estrada> parseGrafoCidade(String filepath) throws IOException{
+		ListenableUndirectedWeightedGraph<Edificio, Estrada> cidade = new ListenableUndirectedWeightedGraph<Edificio, Estrada>(Estrada.class);
+		
 
 		Vector<Edificio> edificios = new Vector<Edificio>();
 		Vector<Map<Integer,Integer>> destinos = new Vector<Map<Integer,Integer>>();
+		
+		Edificio.lastID = 1; //stupid hardedcoded line
 
 		BufferedReader reader = new BufferedReader(new FileReader(filepath));
 		String line = null;
@@ -145,7 +148,11 @@ public class Clinica extends JApplet {
 	}
 	
 	public static ListenableUndirectedWeightedGraph<Edificio, Estrada> getCidade(){//problema do caralho
-		return cidade;
+		ListenableUndirectedWeightedGraph<Edificio, Estrada> c = new ListenableUndirectedWeightedGraph<Edificio, Estrada>(Estrada.class);
+		
+		Graphs.addGraph(c, cidade);
+		
+		return c;
 	}
 }
 

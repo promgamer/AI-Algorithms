@@ -6,4 +6,9 @@ public class Habitacao extends Edificio {
 		super(nome, ocupantes);
 	}
 
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+
 }

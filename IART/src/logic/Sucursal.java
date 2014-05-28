@@ -9,13 +9,18 @@ public class Sucursal extends Edificio{
 
 	}
 	
-	/** Adiciona n ocupantes ao edificio **/
+	/** 
+	 * Tenta adicionar n ocupantes ao edificio 
+	 * e devolve o numero de ocupantes
+	 * efetivamente colocados no edificio
+	 * **/
 	public int adicionaOcupantes(int n){
-		if( n > getEspacoDisponivel() )
-			return getEspacoDisponivel();
+		int adicionados;
+		if( n > getEspacoDisponivel())
+			adicionados = getEspacoDisponivel();
+		else adicionados = n;
 		
-		ocupantes += n;
-		return n;
+		return adicionados;
 	}
 
 }
