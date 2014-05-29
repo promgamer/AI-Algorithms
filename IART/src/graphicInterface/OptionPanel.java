@@ -4,6 +4,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import java.awt.event.MouseAdapter;
@@ -17,7 +19,8 @@ public class OptionPanel extends JPanel {
 	private JPanel optionPanel;
 	private JRadioButton rdbtnGenetico;
 	private JRadioButton rdbtnSimulado;
-	private boolean adicionado = false;
+	private boolean genetico = false;
+	private boolean arrefecimentoSimulado = false;
 	private Clinica clinica;
 
 	/**
@@ -36,12 +39,23 @@ public class OptionPanel extends JPanel {
 		rdbtnGenetico.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				if( adicionado == false){
-					GeneticOptions go = new GeneticOptions();
+				if( genetico == false){
+					//Remove o que lá estava
+					if( optionPanel.getComponentCount() != 0){
+						optionPanel.removeAll();
+					}
+					
+					//Adiciona o painel desejado
+					GeneticOptions go = new GeneticOptions(clinica);
 					optionPanel.add(go);
-					adicionado = true;
-					clinica.revalidate();
-					clinica.repaint();
+					
+					// troca os booleanos
+					genetico = true;
+					arrefecimentoSimulado = false;
+					
+					// faz update
+					clinica.frame.pack();
+					clinica.frame.repaint();
 				}
 			}
 		});
@@ -50,14 +64,36 @@ public class OptionPanel extends JPanel {
 		buttonGroup.add(rdbtnGenetico);
 		
 		rdbtnSimulado = new JRadioButton("Arrefecimento Simulado");
+		rdbtnSimulado.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if( arrefecimentoSimulado == false){
+					//Remove o que lá estava
+					if( optionPanel.getComponentCount() != 0){
+						optionPanel.removeAll();
+					}
+					
+					//Adiciona o painel desejado
+					ArrSimuladoOptions go = new ArrSimuladoOptions(clinica);
+					optionPanel.add(go);
+					
+					// troca os booleanos
+					arrefecimentoSimulado = true;
+					genetico = false;
+					
+					//faz update
+					// faz update
+					clinica.frame.pack();
+					clinica.frame.repaint();
+				}
+			}
+		});
 		topPanel.add(rdbtnSimulado);
 		buttonGroup.add(rdbtnSimulado);
 		
 		optionPanel = new JPanel();
 		add(optionPanel, BorderLayout.CENTER);
 		optionPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
-
 	}
 
 }

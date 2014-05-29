@@ -47,6 +47,7 @@ public class Clinica extends JApplet {
 	private static final Dimension DEFAULT_SIZE = new Dimension(1024, 728);
 
 	private JGraphXAdapter<Edificio, Estrada> jgxAdapter;
+	public JFrame frame;
 
 
 	public static void main(String [] args) throws IOException
@@ -56,46 +57,20 @@ public class Clinica extends JApplet {
 
 
 		/* Prepara a janela */
-		JFrame frame = new JFrame();
-		frame.getContentPane().add(clinica);
-		frame.setTitle("B4. Optimização do Transporte de Pacientes");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.pack();
-		frame.setVisible(true);
-		
-		/* Calculos do algoritmo genetico */
-		int contador = 1;
-		
-		int tamanhoPopulacao = 50;
-		int tamanhoGenes = 12;
-		Populacao pop = new Populacao(tamanhoPopulacao, tamanhoGenes, cidade.vertexSet().size());;
-		
-		while( contador != 200){
-			pop = EvoluiPopulacao.evoluiPopulacao(pop);
-			
-			
-			System.out.print("Geracao " + contador + ": " + pop.getMelhorAdaptado().toString() + " : ");
-			pop.getMelhorAdaptado().imprimeGenes();
-			contador++;
-		}	
-		
-		// Obtem o melhor individuo
-		Individuo melhor = pop.getMelhorAdaptado();
-		Ambiente e = new Ambiente(melhor.getGenes(), true);
-		e.calculaAdaptacao();
-		e.imprimeMelhor();
+		clinica.frame = new JFrame();
+		clinica.frame.getContentPane().add(clinica);
+		clinica.frame.setTitle("B4. Optimização do Transporte de Pacientes");
+		clinica.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		clinica.frame.pack();
+		clinica.frame.setVisible(true);
 	
 	}
 
 
 	public void init(String filepath) throws IOException {
 		cidade = parseGrafoCidade(filepath);
-
+		
 		Ambiente.setGraphPath(filepath);
-		int capacidadeAmbulancia = 10;
-		int combustivelAmbulancia = 10;
-		Ambiente.setCapacidadeAmbulancia(capacidadeAmbulancia);
-		Ambulancia.setMaxCombustivel(combustivelAmbulancia);
 		
 		jgxAdapter = new JGraphXAdapter<Edificio, Estrada>(cidade);
 		// create a visualization using JGraph, via an adapter
@@ -185,6 +160,37 @@ public class Clinica extends JApplet {
 		Graphs.addGraph(c, cidade);
 		
 		return c;
+	}
+
+
+	public void startGenetic(int capacidadeAmbulancia, int combustivel, int tamanhoPop, int tamanhoGenes, int geracoes) {
+		/* Calculos do algoritmo genetico */
+		int contador = 1;
+		
+		Ambulancia.setMaxCombustivel(combustivel);
+		Ambiente.setCapacidadeAmbulancia((capacidadeAmbulancia));
+
+		Populacao pop = new Populacao(tamanhoPop, tamanhoGenes, cidade.vertexSet().size());;
+		
+		while( contador != geracoes){
+			pop = EvoluiPopulacao.evoluiPopulacao(pop);
+			
+			System.out.print("Geracao " + contador + ": " + pop.getMelhorAdaptado().toString() + " : ");
+			pop.getMelhorAdaptado().imprimeGenes();
+			contador++;
+		}	
+		
+		// Obtem o melhor individuo
+		Individuo melhor = pop.getMelhorAdaptado();
+		Ambiente e = new Ambiente(melhor.getGenes(), true);
+		e.calculaAdaptacao();
+		e.imprimeMelhor();
+	}
+
+
+	public void startSimulated(int capacidadeAmbulancia, int combustivel, int tempInicial, int tempFinal, int taxaArrefecimento) {
+		// TODO Auto-generated method stub
+		
 	}
 }
 
