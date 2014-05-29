@@ -58,7 +58,7 @@ public class Gerador {
 			Vector<Edificio> tmpEdfs = rota.getRota();
 			for(int i=0;i<tmpEdfs.size();i++){
 				Edificio tE = tmpEdfs.get(i);
-				if(!(tE instanceof Bomba)){
+				if(tE instanceof Habitacao){
 					for(int k=0; k<edificios.size(); k++){
 						if(tE.ID == edificios.get(k).ID){
 							edificios.get(k).setOcupantes(tE.getOcupantes());
@@ -67,6 +67,15 @@ public class Gerador {
 							}
 							break;
 						}
+					}
+				}
+			}
+			
+			if( atual == null){
+				for(int j=0; j<edificios.size(); j++){
+					if(edificios.get(j).ID == rota.getUltimoEdificio().ID){
+						atual = edificios.get(j);
+						break;
 					}
 				}
 			}
@@ -84,12 +93,12 @@ public class Gerador {
 		/* ---- Fazer a rota até todos os pacientes estarem em sucursais ---- */
 
 		do{
-			/* Estatísticas
+			/* Estatísticas 
 			System.out.println("Combustível Disponível: "+ambulancia.combustivel_restante());
 			System.out.println("Pacientes na ambulancia: "+ambulancia.getOcupantes());
 			System.out.println("Nr. Pacientes Restantes: "+nrPacientesRestantes);
 			System.out.println(" - - - - - - - - - - - - - - ");
-			 */
+			*/
 
 			// todas as estradas que saem do edificio
 			ArrayList<Estrada> estradas = new ArrayList<Estrada>(cidade.edgesOf(atual));
@@ -210,11 +219,12 @@ public class Gerador {
 			ambulancia.consumir(cons);
 		}while(nrPacientesRestantes > 0);
 
-		/* Estatísticas Finais
+		/* Estatísticas Finais 
 		System.out.println("Combustível Disponível: "+ambulancia.combustivel_restante());
 		System.out.println("Nr. Pacientes Restantes: "+nrPacientesRestantes);
 		System.out.println(" - - - - - - - - - - - - - - ");
-		 */
+		*/
+		
 		reset();
 		return rota;
 	}
@@ -249,7 +259,7 @@ public class Gerador {
 
 	public static void main(String[] args) throws IOException{
 		Gerador g = new Gerador(new Ambulancia(8), 18, "grafoCidade.txt");
-		SimulatedAnnealing sm = new SimulatedAnnealing(10000, 0.0003, 0.001, g);
+		SimulatedAnnealing sm = new SimulatedAnnealing(1000, 0.003, 0.001, g);
 		long startTime = System.nanoTime();
 		sm.run(false);
 		long endTime = System.nanoTime();

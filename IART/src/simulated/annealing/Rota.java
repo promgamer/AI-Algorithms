@@ -1,6 +1,7 @@
 package simulated.annealing;
 
 import java.util.Map.Entry;
+import java.util.AbstractMap;
 import java.util.Vector;
 
 import logic.Edificio;
@@ -53,7 +54,7 @@ public class Rota {
 			distancias.add(tmpD.get(i));
 			estadoAmbulancia.add(tmpA.get(i));
 		}
-		distanciaTotal = distancias.lastElement();
+		distanciaTotal = distancias.isEmpty()?0:distancias.lastElement();
 	}
 	
 	public void adicionarEdificio(Edificio edf, Integer n){
@@ -78,15 +79,20 @@ public class Rota {
 	}
 	
 	public int getUltimoNrPacientes(){
-		return nrPacientes.lastElement();
+		return nrPacientes.isEmpty()?0:nrPacientes.lastElement();
 	}
 	
 	public Entry<Boolean, Boolean> getUltimoEstado(){
-		return estado.lastElement();
+		return estado.isEmpty()?
+				new AbstractMap.SimpleEntry<Boolean, Boolean>(false,false)
+				:estado.lastElement();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Entry<Integer, Double> getUltimoEstadoAmbulancia() {
-		return estadoAmbulancia.lastElement();
+		return estadoAmbulancia.isEmpty()?
+				new AbstractMap.SimpleEntry<Integer, Double>(0,0.0)
+				:estadoAmbulancia.lastElement();
 	}
 	
 	public Vector<Double> getDistancias(){
