@@ -1,12 +1,13 @@
 package simulated.annealing;
 
+import graphicInterface.Clinica;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Vector;
 
 import logic.Ambulancia;
 import logic.Bomba;
-import logic.Clinica;
 import logic.Edificio;
 import logic.Estrada;
 import logic.Habitacao;

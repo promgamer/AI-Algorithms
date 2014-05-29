@@ -1,12 +1,11 @@
 package geneticAlgorithm;
 
-import java.io.IOException;
+import graphicInterface.Clinica;
+
 import java.util.Vector;
 
 import logic.Ambulancia;
 import logic.Bomba;
-import logic.Cidade;
-import logic.Clinica;
 import logic.Edificio;
 import logic.Estrada;
 import logic.Habitacao;
@@ -17,18 +16,36 @@ public class Ambiente {
 
 	/** Static Members **/
 	private static int capacidade_ambulancia;
-	
-	public static int NoInicial = 1;
+	public static final int NoInicial = 1;
+	private static final int PONTOS_POR_TRANSPORTAR = 2;
+	private static final double PONTOS_DISTANCIA = 0.4;
+	private static final double PONTOS_ENTREGUE = 1.5;
+	private static final int PONTOS_RECOLHIDO = 1;
+	private static String graphPath;
 	
 	/** Non-static Members **/
 	private Vector<Integer> rota;
 	private ListenableUndirectedWeightedGraph<Edificio, Estrada> cidade;
 	private Ambulancia ambulancia;
 	
+	/** Variavel Especial Usada apenas para o mostrar o resultado final**/
+	private Rota r;
+	private boolean mostra_melhor;
+	
+	/** Construtor Default **/
 	@SuppressWarnings("unchecked")
-	public Ambiente(ListenableUndirectedWeightedGraph<Edificio, Estrada> c, Vector<Integer> r){
-		this.cidade = c;
+	public Ambiente(Vector<Integer> r){
+		cidade = Clinica.parseGrafoCidade(graphPath);
 		this.rota = (Vector<Integer>) r.clone();
+		mostra_melhor = false;
+	}
+	
+	/** Construtor para mostrar o melhor resultado **/
+	@SuppressWarnings("unchecked")
+	public Ambiente(Vector<Integer> r, boolean mostrar){ 
+		cidade = Clinica.parseGrafoCidade(graphPath);
+		this.rota = (Vector<Integer>) r.clone();
+		mostra_melhor = mostrar;
 	}
 	
 	
@@ -41,21 +58,10 @@ public class Ambiente {
 		double pacientes_recolhidos = 0;
 		double pacientes_entregues = 0;
 		double distancia_percorrida = 0;
-		double pacientes_totais = (double) pacientesPorTransportar();
 		
 		/* Variveis de verificacao de rota */
 		int idAtual = NoInicial;
 		int idAntigo;
-		
-		
-		// Verifica se a rota é possivel
-		// isto é, se existem edges que ligam os vertices
-		// se a rota é inválida, então este é um mau individuo neste ambiente
-		if( verificaRota(rota) == false){
-			System.out.println("Vai sair");
-			return 0;
-		}
-		
 
 		// CICLO
 		while(ambulancia.combustivel_restante() > 0 && rota.size() != 0){
@@ -69,46 +75,55 @@ public class Ambiente {
 			if(idAntigo == idAtual)
 				continue;
 
-			Edificio e = obtemVertice(idAtual);
+			Edificio edAtual = obtemVertice(idAtual);
+			Edificio edAntigo = obtemVertice(idAntigo);
+			
+			//Verifica se existe uma ligacao entre os dois edificios
+			if( !cidade.containsEdge(edAntigo, edAtual) )
+				break;
 			
 			//calcula a distancia percorrida
-			double distancia = calculaDistancia(obtemVertice(idAntigo), e);
+			double distancia = calculaDistancia(edAntigo, edAtual);
 			ambulancia.consumir(distancia);
+			
+			//verificação dupla da distancia a percorrer
+			if( ambulancia.combustivel_restante() < 0)
+				break;
+			
+			// update do contador da distancia
 			distancia_percorrida += distancia;
 			
 			// Verifica se é fim de rota
-			if( verificaFimDeRota(e) == true ){
-				System.out.println("FIM DE ROTA");
+			if( verificaFimDeRota(edAtual) == true )
 				break;
-			}
 
 				
 			
 			/** Verifica as habitações e faz ações consoante o seu tipo **/
 			
-			if( e instanceof Habitacao ){
+			if( edAtual instanceof Habitacao ){
 				
 				if( !ambulancia.isFull()){ //verifica se não esta cheia
 					
-					int retirados = e.retirarOcupantes( ambulancia.getEspacoDisponivel() );
+					int retirados = edAtual.retirarOcupantes( ambulancia.getEspacoDisponivel() );
 					ambulancia.ocupar( retirados );
 					
 					// aumenta o contador
 					pacientes_recolhidos += retirados;
 				}
 					
-			} else if( e instanceof Bomba ){
+			} else if( edAtual instanceof Bomba ){
 				
 				ambulancia.abastecer();
 				
-			} else if( e instanceof Sucursal ){
-				int adicionados = ((Sucursal) e).adicionaOcupantes( ambulancia.getOcupantes() );
+			} else if( edAtual instanceof Sucursal ){
+				int adicionados = ((Sucursal) edAtual).adicionaOcupantes( ambulancia.getOcupantes() );
 				ambulancia.retirar(adicionados);
 				
 				//aumenta o contador
 				pacientes_entregues += adicionados;
 				
-			} else { System.out.println("ERRO! Classe Inválida: " + e.getClass()); }
+			} else { System.out.println("ERRO! Classe Inválida: " + edAtual.getClass()); }
 			
 		} // FIM DO WHILE
 		
@@ -116,38 +131,17 @@ public class Ambiente {
 		double fitness;
 		
 		if(distancia_percorrida != 0)
-			 fitness = 0.6 * pacientes_entregues + 0.4*pacientes_recolhidos - 0.2 * distancia_percorrida;
+			fitness = PONTOS_RECOLHIDO * pacientes_recolhidos + PONTOS_ENTREGUE * pacientes_entregues - PONTOS_DISTANCIA * distancia_percorrida - PONTOS_POR_TRANSPORTAR * pacientesPorTransportar();
 		else fitness = 0;
 		
-		System.out.println("entregues:" + pacientes_entregues +" ; recolhidos: " + pacientes_recolhidos + "; distancia: " + distancia_percorrida + " ; fitness: " + fitness);
+		/** Utilizado apenas para a impressao do resultado final **/
+		if( mostra_melhor)
+			r = new Rota(pacientes_entregues, pacientes_recolhidos, distancia_percorrida, fitness);
 		
 		return fitness;
 		
 	}
 	
-	/** Verifica se uma rota é valida 
-	 * 
-	 * Para uma rota ser válida, é necessário que existam
-	 * ligaçoes entre todos os pares de vertices
-	 * 
-	 * **/
-	private boolean verificaRota(Vector<Integer> rota){
-		
-		for(int i = 0; i < rota.size()-1; i++){
-			
-			//obtem um par de vertices
-			Edificio e1 = obtemVertice(i);
-			Edificio e2 = obtemVertice(i+1);
-			
-			// verifica se existe uma ligacao entre os dois edificios
-			if( !cidade.containsEdge(e1,e2) && e1 != null && e2 != null ){
-				return false;
-			}
-		}
-		
-		return true;
-	}
-
 	private Edificio obtemVertice(int ID) {
 		Vector<Edificio> edificios = new Vector<>(cidade.vertexSet());
 		
@@ -159,6 +153,7 @@ public class Ambiente {
 		return null;
 	}
 	
+	/** Devolve o numero de pacientes que ainda se encontram em edificios **/
 	private int pacientesPorTransportar(){
 		Vector<Edificio> edificios = new Vector<>(cidade.vertexSet());
 		
@@ -191,7 +186,16 @@ public class Ambiente {
 	/** Define a capacidade da ambulancia **/
 	public static void setCapacidadeAmbulancia(int i) {
 		capacidade_ambulancia = i;
-		
+	}
+	
+	/** Atualiza o caminho para o grafo a utilizar **/
+	public static void setGraphPath(String path){
+		graphPath = path;
+	}
+
+
+	public void imprimeMelhor() {
+		System.out.println(r);
 	}
 
 }

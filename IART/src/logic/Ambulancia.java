@@ -1,7 +1,8 @@
 package logic;
 
 public class Ambulancia {
-	final static double combustivel_max = 400;
+	private static double combustivel_max;;
+
 	final int capacidade_ocupantes;
 	private int nrOcupantes;
 	private double combustivel;
@@ -55,5 +56,9 @@ public class Ambulancia {
 	
 	public Ambulancia clone(){
 		return new Ambulancia(capacidade_ocupantes);
+	}
+	
+	public static void setMaxCombustivel(double c){
+		combustivel_max = c;
 	}
 }

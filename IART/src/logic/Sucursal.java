@@ -20,6 +20,8 @@ public class Sucursal extends Edificio{
 			adicionados = getEspacoDisponivel();
 		else adicionados = n;
 		
+		ocupantes += adicionados;
+		
 		return adicionados;
 	}
 
