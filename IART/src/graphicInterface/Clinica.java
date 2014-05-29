@@ -1,4 +1,4 @@
-package logic;
+package graphicInterface;
 
 import geneticAlgorithm.Ambiente;
 import geneticAlgorithm.EvoluiPopulacao;
@@ -19,8 +19,25 @@ import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.ListenableUndirectedWeightedGraph;
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.swing.mxGraphComponent;
+import java.awt.BorderLayout;
+import javax.swing.JPanel;
+
+import logic.Ambulancia;
+import logic.Bomba;
+import logic.Edificio;
+import logic.Estrada;
+import logic.Habitacao;
+import logic.Sucursal;
 
 public class Clinica extends JApplet {
+	public Clinica() {
+		
+		JPanel panel = new JPanel();
+		getContentPane().add(panel, BorderLayout.EAST);
+		
+		OptionPanel op = new OptionPanel();
+		panel.add(op);
+	}
 
 	private static final long serialVersionUID = 8528919979874509607L;
 
@@ -75,7 +92,10 @@ public class Clinica extends JApplet {
 		cidade = parseGrafoCidade(filepath);
 
 		Ambiente.setGraphPath(filepath);
-		Ambiente.setCapacidadeAmbulancia(10);
+		int capacidadeAmbulancia = 10;
+		int combustivelAmbulancia = 10;
+		Ambiente.setCapacidadeAmbulancia(capacidadeAmbulancia);
+		Ambulancia.setMaxCombustivel(combustivelAmbulancia);
 		
 		jgxAdapter = new JGraphXAdapter<Edificio, Estrada>(cidade);
 		// create a visualization using JGraph, via an adapter
@@ -103,7 +123,6 @@ public class Clinica extends JApplet {
 		try {
 			reader = new BufferedReader(new FileReader(filepath));
 		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		String line = null;
@@ -134,13 +153,11 @@ public class Clinica extends JApplet {
 				destinos.add(destinosAux);
 			}
 		} catch (NumberFormatException | IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		try {
 			reader.close();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 

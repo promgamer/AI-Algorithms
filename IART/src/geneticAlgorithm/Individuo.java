@@ -1,10 +1,7 @@
 package geneticAlgorithm;
 
-import java.io.IOException;
 import java.util.Random;
 import java.util.Vector;
-
-import logic.Clinica;
 
 public class Individuo {
 		

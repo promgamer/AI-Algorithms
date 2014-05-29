@@ -1,10 +1,11 @@
 package geneticAlgorithm;
 
+import graphicInterface.Clinica;
+
 import java.util.Vector;
 
 import logic.Ambulancia;
 import logic.Bomba;
-import logic.Clinica;
 import logic.Edificio;
 import logic.Estrada;
 import logic.Habitacao;
