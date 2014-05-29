@@ -123,7 +123,7 @@ public class Rota {
 	public void print() {
 		for(int i=0; i<rota.size(); i++){
 			System.out.println(rota.elementAt(i).ID + " - " + rota.elementAt(i).nome+
-					"\t Em Habitacao: "+nrPacientes.get(i)+
+					"\t Em Falta: "+nrPacientes.get(i)+
 					"\t Distancia Percorrida: "+distancias.get(i)+
 					"\t Bomba? "+estado.get(i).getKey()+" | Sucursal? "+estado.get(i).getValue()+
 					"\t Ambulancia -> Ocupantes: "+estadoAmbulancia.get(i).getKey()+" | Combustível: "+estadoAmbulancia.get(i).getValue());

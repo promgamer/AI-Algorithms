@@ -35,14 +35,12 @@ public class Gerador {
 	}
 
 	public Rota geraRota(Rota rotaAtual) throws IOException {
-		
+		boolean DEBUG = false;
 		Rota rota = null;
 		Edificio atual = null;
 		// boleanos para controlar o combustivel e pacientes "deixados para tras"
 		boolean prioridadeSucursal = false, prioridadeBomba = false;
-		
-		ArrayList<Edificio> edificios = new ArrayList<Edificio>( cidade.vertexSet() );
-		
+
 		if(rotaAtual!=null){
 			rotaReutilizada = true;
 			//escolher uma posição aleatória para alterar
@@ -53,7 +51,9 @@ public class Gerador {
 			prioridadeSucursal = rota.getUltimoEstado().getValue();
 			ambulancia.consumir(ambulancia.combustivel_restante()-rota.getUltimoEstadoAmbulancia().getValue());
 			ambulancia.ocupar(rota.getUltimoEstadoAmbulancia().getKey());
-			
+
+			ArrayList<Edificio> edificios = new ArrayList<Edificio>( cidade.vertexSet() );
+
 			//pré-processar o grafo da cidade para despovoar as habitações necessárias
 			Vector<Edificio> tmpEdfs = rota.getRota();
 			for(int i=0;i<tmpEdfs.size();i++){
@@ -70,7 +70,7 @@ public class Gerador {
 					}
 				}
 			}
-			
+
 			if( atual == null){
 				for(int j=0; j<edificios.size(); j++){
 					if(edificios.get(j).ID == rota.getUltimoEdificio().ID){
@@ -81,24 +81,43 @@ public class Gerador {
 			}
 		}else{
 			rota = new Rota();
-			
+
+			ArrayList<Edificio> edificios = new ArrayList<Edificio>( cidade.vertexSet() );
+
 			//Escolher edificio inicial -> tem de ser uma sucursal(apenas sucursais têm garagem e a ambulancia)
 			do{
 				int rng = (int)(Math.random() * edificios.size());
 				atual = edificios.get( rng );
 			}while(!(atual instanceof Sucursal));
 
+			// adicionar o edificio atual à rota antes de progredir
+			rota.adicionarEdificio(atual, nrPacientesRestantes);
+			rota.addEstado(new AbstractMap.SimpleEntry<Boolean, Boolean>(prioridadeBomba,prioridadeSucursal));
+			rota.addEstadoAmbulancia(
+					new AbstractMap.SimpleEntry<Integer, Double>(
+							ambulancia.getOcupantes(),
+							ambulancia.combustivel_restante()));
+			rota.addDistancia(0);
+
 		}
 
 		/* ---- Fazer a rota até todos os pacientes estarem em sucursais ---- */
 
-		do{
-			/* Estatísticas 
-			System.out.println("Combustível Disponível: "+ambulancia.combustivel_restante());
-			System.out.println("Pacientes na ambulancia: "+ambulancia.getOcupantes());
-			System.out.println("Nr. Pacientes Restantes: "+nrPacientesRestantes);
-			System.out.println(" - - - - - - - - - - - - - - ");
-			*/
+	while(nrPacientesRestantes > 0){
+			/* Estatísticas */
+			if(DEBUG){
+				if(atual instanceof Habitacao) System.out.println(atual.nome+" "+atual.getOcupantes());
+				System.out.println("Combustível Disponível: "+ambulancia.combustivel_restante());
+				System.out.println("Pacientes na ambulancia: "+ambulancia.getOcupantes());
+				System.out.println("Nr. Pacientes Restantes: "+nrPacientesRestantes);
+				System.out.println(" - - - - - - - - - - - - - - ");
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 
 			// todas as estradas que saem do edificio
 			ArrayList<Estrada> estradas = new ArrayList<Estrada>(cidade.edgesOf(atual));
@@ -137,16 +156,10 @@ public class Gerador {
 					ambulancia.abastecer();
 					prioridadeBomba = false;
 				}
-				
-				// adicionar o edificio atual à rota antes de progredir
-				rota.adicionarEdificio(atual, nrPacientesRestantes);
-				rota.addEstado(new AbstractMap.SimpleEntry<Boolean, Boolean>(prioridadeBomba,prioridadeSucursal));
-				rota.addEstadoAmbulancia(
-						new AbstractMap.SimpleEntry<Integer, Double>(
-								ambulancia.getOcupantes(),
-								ambulancia.combustivel_restante()));
+
+				if(!(nrPacientesRestantes > 0)) break;
 			}
-			
+
 			rotaReutilizada = false;
 			boolean gotIt = false;
 			double cons=0;
@@ -217,14 +230,29 @@ public class Gerador {
 				rota.addDistancia((cons=cidade.getEdgeWeight(estradas.get(rng2))));
 			}
 			ambulancia.consumir(cons);
-		}while(nrPacientesRestantes > 0);
+			
+			// adicionar o edificio atual à rota antes de progredir
+			rota.adicionarEdificio(atual, nrPacientesRestantes);
+			rota.addEstado(new AbstractMap.SimpleEntry<Boolean, Boolean>(prioridadeBomba,prioridadeSucursal));
+			rota.addEstadoAmbulancia(
+					new AbstractMap.SimpleEntry<Integer, Double>(
+							ambulancia.getOcupantes(),
+							ambulancia.combustivel_restante()));
+			
+			if(nrPacientesRestantes<3){
+				DEBUG = true;
+			}
+			
+		}
 
-		/* Estatísticas Finais 
+		/* Estatísticas Finais */
+		if(DEBUG){
 		System.out.println("Combustível Disponível: "+ambulancia.combustivel_restante());
 		System.out.println("Nr. Pacientes Restantes: "+nrPacientesRestantes);
-		System.out.println(" - - - - - - - - - - - - - - ");
-		*/
-		
+		System.out.println(" - - - - - - - END - - - - - - - ");
+		DEBUG = false;
+		}
+
 		reset();
 		return rota;
 	}
@@ -259,7 +287,7 @@ public class Gerador {
 
 	public static void main(String[] args) throws IOException{
 		Gerador g = new Gerador(new Ambulancia(8), 18, "grafoCidade.txt");
-		SimulatedAnnealing sm = new SimulatedAnnealing(1000, 0.003, 0.001, g);
+		SimulatedAnnealing sm = new SimulatedAnnealing(1000, 0.03, 0.001, g);
 		long startTime = System.nanoTime();
 		sm.run(false);
 		long endTime = System.nanoTime();
