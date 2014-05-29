@@ -46,7 +46,7 @@ public class Gerador {
 		if(rotaAtual!=null){
 			rotaReutilizada = true;
 			//escolher uma posição aleatória para alterar
-			int edificioRandom = (int)(Math.random() * rotaAtual.getRota().size());
+			int edificioRandom = 1+(int)(Math.random() * rotaAtual.getRota().size());
 			rota = new Rota(rotaAtual, edificioRandom);
 			nrPacientesRestantes = rota.getUltimoNrPacientes();
 			prioridadeBomba = rota.getUltimoEstado().getKey();
