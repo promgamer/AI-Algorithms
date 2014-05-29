@@ -8,6 +8,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.FlowLayout;
 
 @SuppressWarnings("serial")
 public class OptionPanel extends JPanel {
@@ -16,22 +17,32 @@ public class OptionPanel extends JPanel {
 	private JPanel optionPanel;
 	private JRadioButton rdbtnGenetico;
 	private JRadioButton rdbtnSimulado;
+	private boolean adicionado = false;
+	private Clinica clinica;
 
 	/**
 	 * Create the panel.
+	 * @param clinica 
 	 */
-	public OptionPanel() {
+	public OptionPanel(Clinica c) {
 		setLayout(new BorderLayout(0, 0));
 		
 		JPanel topPanel = new JPanel();
 		add(topPanel, BorderLayout.NORTH);
 		
+		clinica = c;
+		
 		rdbtnGenetico = new JRadioButton("Algoritmo Genético");
 		rdbtnGenetico.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				GeneticOptions go = new GeneticOptions();
-				optionPanel.add(go);
+				if( adicionado == false){
+					GeneticOptions go = new GeneticOptions();
+					optionPanel.add(go);
+					adicionado = true;
+					clinica.revalidate();
+					clinica.repaint();
+				}
 			}
 		});
 		
@@ -44,6 +55,8 @@ public class OptionPanel extends JPanel {
 		
 		optionPanel = new JPanel();
 		add(optionPanel, BorderLayout.CENTER);
+		optionPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
 
 	}
 
