@@ -3,170 +3,31 @@ package graphicInterface;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
-import java.awt.Font;
-import java.awt.BorderLayout;
-import javax.swing.BoxLayout;
-import java.awt.GridLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import javax.swing.JSeparator;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 @SuppressWarnings("serial")
 public class GeneticOptions extends JPanel {
-
-	private static final int DEFAULT_AMBULANCE_CAP = 10;
-	private static final int DEFAULT_GENES_SIZE = 12;
-	private static final int DEFAULT_POPULATION_SIZE = 50;
-	private static final Object DEFAULT_COMBUSTIVEL = null;
 
 	/**
 	 * Create the panel.
 	 */
 	public GeneticOptions() {
-		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] {97, 41, 0, 85};
-		gridBagLayout.rowHeights = new int[] {41, 41, 41, 41, 41, 41, 0, 0, 0, 41};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, 0.0};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		setLayout(gridBagLayout);
-		
-		JLabel lblAmbulncia = new JLabel("Ambul\u00E2ncia");
-		lblAmbulncia.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblAmbulncia.setBounds(98, 27, 66, 14);
-		GridBagConstraints gbc_lblAmbulncia = new GridBagConstraints();
-		gbc_lblAmbulncia.gridwidth = 4;
-		gbc_lblAmbulncia.fill = GridBagConstraints.VERTICAL;
-		gbc_lblAmbulncia.insets = new Insets(0, 0, 5, 0);
-		gbc_lblAmbulncia.gridx = 0;
-		gbc_lblAmbulncia.gridy = 0;
-		add(lblAmbulncia, gbc_lblAmbulncia);
-		
-		JLabel lblCapacidade = new JLabel("Capacidade");
-		lblCapacidade.setBounds(84, 52, 56, 14);
-		GridBagConstraints gbc_lblCapacidade = new GridBagConstraints();
-		gbc_lblCapacidade.fill = GridBagConstraints.BOTH;
-		gbc_lblCapacidade.insets = new Insets(0, 0, 5, 5);
-		gbc_lblCapacidade.gridx = 0;
-		gbc_lblCapacidade.gridy = 1;
-		add(lblCapacidade, gbc_lblCapacidade);
-		
-		JSpinner spinnerCapacidadeAmbulancia = new JSpinner();
-		spinnerCapacidadeAmbulancia.setBounds(30, 24, 29, 20);
-		spinnerCapacidadeAmbulancia.setValue(DEFAULT_AMBULANCE_CAP);
-		GridBagConstraints gbc_spinnerCapacidadeAmbulancia = new GridBagConstraints();
-		gbc_spinnerCapacidadeAmbulancia.gridwidth = 2;
-		gbc_spinnerCapacidadeAmbulancia.fill = GridBagConstraints.BOTH;
-		gbc_spinnerCapacidadeAmbulancia.insets = new Insets(0, 0, 5, 0);
-		gbc_spinnerCapacidadeAmbulancia.gridx = 2;
-		gbc_spinnerCapacidadeAmbulancia.gridy = 1;
-		add(spinnerCapacidadeAmbulancia, gbc_spinnerCapacidadeAmbulancia);
-		
-		JLabel lblCombustivelAmbulancia = new JLabel("Combust\u00EDvel");
-		lblCombustivelAmbulancia.setBounds(9, 77, 58, 14);
-		GridBagConstraints gbc_lblCombustivelAmbulancia = new GridBagConstraints();
-		gbc_lblCombustivelAmbulancia.gridwidth = 2;
-		gbc_lblCombustivelAmbulancia.fill = GridBagConstraints.BOTH;
-		gbc_lblCombustivelAmbulancia.insets = new Insets(0, 0, 5, 5);
-		gbc_lblCombustivelAmbulancia.gridx = 0;
-		gbc_lblCombustivelAmbulancia.gridy = 2;
-		add(lblCombustivelAmbulancia, gbc_lblCombustivelAmbulancia);
-		
-		JSpinner spinnerCombustivel = new JSpinner();
-		spinnerCombustivel.setBounds(64, 24, 29, 20);
-		spinnerCombustivel.setValue(DEFAULT_COMBUSTIVEL);
-		GridBagConstraints gbc_spinnerCombustivel = new GridBagConstraints();
-		gbc_spinnerCombustivel.gridwidth = 2;
-		gbc_spinnerCombustivel.fill = GridBagConstraints.BOTH;
-		gbc_spinnerCombustivel.insets = new Insets(0, 0, 5, 0);
-		gbc_spinnerCombustivel.gridx = 2;
-		gbc_spinnerCombustivel.gridy = 2;
-		add(spinnerCombustivel, gbc_spinnerCombustivel);
-		
-		JLabel labelPopulacao = new JLabel("Popula\u00E7\u00E3o");
-		labelPopulacao.setFont(new Font("Tahoma", Font.BOLD, 11));
-		labelPopulacao.setBounds(21, 52, 58, 14);
-		GridBagConstraints gbc_labelPopulacao = new GridBagConstraints();
-		gbc_labelPopulacao.fill = GridBagConstraints.VERTICAL;
-		gbc_labelPopulacao.gridwidth = 4;
-		gbc_labelPopulacao.insets = new Insets(0, 0, 5, 0);
-		gbc_labelPopulacao.gridx = 0;
-		gbc_labelPopulacao.gridy = 3;
-		add(labelPopulacao, gbc_labelPopulacao);
-		
-		JLabel lblTamanhoGenes = new JLabel("Tamanho Genes");
-		lblTamanhoGenes.setBounds(109, 5, 77, 14);
-		GridBagConstraints gbc_lblTamanhoGenes = new GridBagConstraints();
-		gbc_lblTamanhoGenes.gridwidth = 2;
-		gbc_lblTamanhoGenes.fill = GridBagConstraints.BOTH;
-		gbc_lblTamanhoGenes.insets = new Insets(0, 0, 5, 5);
-		gbc_lblTamanhoGenes.gridx = 0;
-		gbc_lblTamanhoGenes.gridy = 4;
-		add(lblTamanhoGenes, gbc_lblTamanhoGenes);
-		
-		JSpinner spinnerTamanhoGenes = new JSpinner();
-		spinnerTamanhoGenes.setBounds(145, 49, 29, 20);
-		spinnerTamanhoGenes.setValue(DEFAULT_GENES_SIZE);
-		GridBagConstraints gbc_spinnerTamanhoGenes = new GridBagConstraints();
-		gbc_spinnerTamanhoGenes.gridwidth = 2;
-		gbc_spinnerTamanhoGenes.fill = GridBagConstraints.BOTH;
-		gbc_spinnerTamanhoGenes.insets = new Insets(0, 0, 5, 0);
-		gbc_spinnerTamanhoGenes.gridx = 2;
-		gbc_spinnerTamanhoGenes.gridy = 4;
-		add(spinnerTamanhoGenes, gbc_spinnerTamanhoGenes);
+		//setLayout(null);
 		
 		JLabel lblTamanhoPopulacao = new JLabel("Tamanho População");
-		lblTamanhoPopulacao.setBounds(8, 5, 96, 14);
-		GridBagConstraints gbc_lblTamanhoPopulacao = new GridBagConstraints();
-		gbc_lblTamanhoPopulacao.gridwidth = 2;
-		gbc_lblTamanhoPopulacao.fill = GridBagConstraints.BOTH;
-		gbc_lblTamanhoPopulacao.insets = new Insets(0, 0, 5, 5);
-		gbc_lblTamanhoPopulacao.gridx = 0;
-		gbc_lblTamanhoPopulacao.gridy = 5;
-		add(lblTamanhoPopulacao, gbc_lblTamanhoPopulacao);
+		lblTamanhoPopulacao.setBounds(10, 11, 109, 32);
+		add(lblTamanhoPopulacao);
 		
-		JSpinner spinnerTamanhoPop = new JSpinner();
-		spinnerTamanhoPop.setBounds(72, 74, 29, 20);
-		GridBagConstraints gbc_spinnerTamanhoPop = new GridBagConstraints();
-		gbc_spinnerTamanhoPop.gridwidth = 2;
-		gbc_spinnerTamanhoPop.fill = GridBagConstraints.BOTH;
-		gbc_spinnerTamanhoPop.insets = new Insets(0, 0, 5, 0);
-		gbc_spinnerTamanhoPop.gridx = 2;
-		gbc_spinnerTamanhoPop.gridy = 5;
-		add(spinnerTamanhoPop, gbc_spinnerTamanhoPop);
+		JLabel lblTamanhoGenes = new JLabel("Tamanho Genes");
+		lblTamanhoGenes.setBounds(10, 54, 95, 14);
+		add(lblTamanhoGenes);
 		
-		JLabel lblGeraes = new JLabel("Gera\u00E7\u00F5es");
-		lblGeraes.setBounds(106, 77, 45, 14);
-		GridBagConstraints gbc_lblGeraes = new GridBagConstraints();
-		gbc_lblGeraes.fill = GridBagConstraints.BOTH;
-		gbc_lblGeraes.insets = new Insets(0, 0, 5, 5);
-		gbc_lblGeraes.gridx = 0;
-		gbc_lblGeraes.gridy = 6;
-		add(lblGeraes, gbc_lblGeraes);
+		JSpinner spinnerPopulacao = new JSpinner();
+		spinnerPopulacao.setBounds(129, 17, 29, 20);
+		add(spinnerPopulacao);
 		
-		JSpinner spinnerGeracoes = new JSpinner();
-		spinnerGeracoes.setBounds(156, 74, 29, 20);
-		GridBagConstraints gbc_spinnerGeracoes = new GridBagConstraints();
-		gbc_spinnerGeracoes.insets = new Insets(0, 0, 5, 0);
-		gbc_spinnerGeracoes.gridwidth = 2;
-		gbc_spinnerGeracoes.fill = GridBagConstraints.BOTH;
-		gbc_spinnerGeracoes.gridx = 2;
-		gbc_spinnerGeracoes.gridy = 6;
-		add(spinnerGeracoes, gbc_spinnerGeracoes);
-		
-		JButton btnStartGenetico = new JButton("Correr Algoritmo!");
-		btnStartGenetico.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-			}
-		});
-		GridBagConstraints gbc_btnStartGenetico = new GridBagConstraints();
-		gbc_btnStartGenetico.gridwidth = 6;
-		gbc_btnStartGenetico.gridx = 0;
-		gbc_btnStartGenetico.gridy = 8;
-		add(btnStartGenetico, gbc_btnStartGenetico);
+		JSpinner spinnerGenes = new JSpinner();
+		spinnerGenes.setBounds(129, 51, 29, 20);
+		add(spinnerGenes);
 
 	}
 }

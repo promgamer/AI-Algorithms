@@ -35,7 +35,7 @@ public class Clinica extends JApplet {
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.EAST);
 		
-		OptionPanel op = new OptionPanel(this);
+		OptionPanel op = new OptionPanel();
 		panel.add(op);
 	}
 
