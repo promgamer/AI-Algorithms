@@ -206,8 +206,6 @@ public class Gerador {
 
 	public static void main(String[] args) throws IOException{
 		Gerador g = new Gerador(new Ambulancia(8), 18, "grafoCidade.txt");
-		//Rota r = g.geraRota();
-		//r.print();
 		SimulatedAnnealing sm = new SimulatedAnnealing(10000, 0.0003, 0.001, g);
 		long startTime = System.nanoTime();
 		sm.run();

@@ -39,6 +39,5 @@ public class Rota {
 			System.out.println(rota.elementAt(i).ID + " - " + rota.elementAt(i).nome);
 		}
 		System.out.println("Distancia Total: "+distanciaTotal);
-	}
-	
+	}	
 }
