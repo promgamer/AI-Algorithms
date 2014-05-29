@@ -23,12 +23,12 @@ public class SimulatedAnnealing {
         return Math.exp((energiaSolucaoAtual - energiaNovaSolucao) / temperatura);
     }
 	
-	public void run() throws IOException{
-		Rota solucaoAtual = gerador.geraRota();
+	public void run(boolean full) throws IOException{
+		Rota solucaoAtual = gerador.geraRota(null);
 		Rota melhorSolucao = new Rota(solucaoAtual);
 		
 		do {
-			Rota novaSolucao = gerador.geraRota();
+			Rota novaSolucao = full?gerador.geraRota(null):gerador.geraRota(solucaoAtual); 
 			
             double energiaSolucaoAtual = solucaoAtual.getDistanciaTotal();
             double energiaNovaSolucao = novaSolucao.getDistanciaTotal();

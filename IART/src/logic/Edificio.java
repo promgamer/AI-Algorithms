@@ -65,6 +65,10 @@ public class Edificio {
 		return n;
 	}
 	
+	public void setOcupantes(int n){
+		ocupantes = n;
+	}
+	
 	/** Retira todos os ocupantes do edificio **/
 	public int esvaziaEdificio(){
 		return retirarOcupantes(ocupantes);
@@ -72,6 +76,19 @@ public class Edificio {
 	
 	public String toString(){
 		return nome;
+	}
+	
+	/** Termo de comparação */
+	public boolean equals(Edificio e){
+		if(ID != e.ID)
+			return false;
+		if(!nome.equals(e.nome))
+			return false;
+		else if(ocupantes != e.getOcupantes())
+			return false;
+		else if(capacidadeMaxima != e.getCapacidade())
+			return false;
+		else return true;
 	}
 
 }
