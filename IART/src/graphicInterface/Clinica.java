@@ -17,6 +17,10 @@ import javax.swing.JFrame;
 import org.jgrapht.Graphs;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.ListenableUndirectedWeightedGraph;
+
+import simulated.annealing.Gerador;
+import simulated.annealing.SimulatedAnnealing;
+
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import java.awt.BorderLayout;
@@ -70,7 +74,9 @@ public class Clinica extends JApplet {
 	public void init(String filepath) throws IOException {
 		cidade = parseGrafoCidade(filepath);
 		
+		// Atribui os caminhos
 		Ambiente.setGraphPath(filepath);
+		Gerador.setGraphPath(filepath);
 		
 		jgxAdapter = new JGraphXAdapter<Edificio, Estrada>(cidade);
 		// create a visualization using JGraph, via an adapter
@@ -170,6 +176,7 @@ public class Clinica extends JApplet {
 		Ambulancia.setMaxCombustivel(combustivel);
 		Ambiente.setCapacidadeAmbulancia((capacidadeAmbulancia));
 
+		long startTime = System.nanoTime();
 		Populacao pop = new Populacao(tamanhoPop, tamanhoGenes, cidade.vertexSet().size());;
 		
 		while( contador != geracoes){
@@ -178,18 +185,42 @@ public class Clinica extends JApplet {
 			System.out.print("Geracao " + contador + ": " + pop.getMelhorAdaptado().toString() + " : ");
 			pop.getMelhorAdaptado().imprimeGenes();
 			contador++;
-		}	
+		}
+		long endTime = System.nanoTime();
+		double duration = (endTime - startTime)/Math.pow(10, 9);
 		
 		// Obtem o melhor individuo
 		Individuo melhor = pop.getMelhorAdaptado();
 		Ambiente e = new Ambiente(melhor.getGenes(), true);
 		e.calculaAdaptacao();
 		e.imprimeMelhor();
+		System.out.println("\nTempo de Execução: "+duration+" segundos.");
 	}
 
 
-	public void startSimulated(int capacidadeAmbulancia, int combustivel, int tempInicial, int tempFinal, int taxaArrefecimento) {
-		// TODO Auto-generated method stub
+	public void startSimulated(int capacidadeAmbulancia, int combustivel, double tempInicial, double tempFinal, double taxaArrefecimento, boolean controlo) {
+		
+		Ambulancia.setMaxCombustivel(combustivel);
+		
+		Gerador g = null;
+		try {
+			g = new Gerador(new Ambulancia(capacidadeAmbulancia));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		SimulatedAnnealing sm = new SimulatedAnnealing(tempFinal, tempFinal, taxaArrefecimento, g);
+		
+		long startTime = System.nanoTime();
+		try {
+			sm.run(controlo);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		long endTime = System.nanoTime();
+		double duration = (endTime - startTime)/Math.pow(10, 9);
+		System.out.println("\nTempo de Execução: "+duration+" segundos.");
 		
 	}
 }

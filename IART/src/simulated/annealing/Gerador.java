@@ -22,19 +22,22 @@ public class Gerador {
 	private Ambulancia ambulancia = null;
 	private int nrPacientesInciais = 0;
 	private int nrPacientesRestantes = 0;
-	private String graphPath = null;
+	private static String graphPath = null;
 	private ListenableUndirectedWeightedGraph<Edificio, Estrada> cidade = null;
 	private boolean first = false;
 	private boolean clear = false;
 	private boolean aproveita = false;
 	
-	public Gerador(Ambulancia ambulancia, String graphPath) throws IOException{
+	public Gerador(Ambulancia ambulancia) throws IOException{
 		this.cidade = Clinica.parseGrafoCidade(graphPath);
 		this.ambulanciaInicial  = ambulancia.clone();
 		this.ambulancia = ambulancia.clone();
 		this.nrPacientesInciais = nrPacientesTransportar();
 		this.nrPacientesRestantes = nrPacientesInciais;
-		this.graphPath = graphPath;
+	}
+	
+	public static void setGraphPath(String path){
+		graphPath = path;
 	}
 	
 	private int nrPacientesTransportar(){
@@ -286,15 +289,5 @@ public class Gerador {
 		this.cidade = Clinica.parseGrafoCidade(graphPath);
 		nrPacientesRestantes = nrPacientesInciais;
 		first = false;
-	}
-
-	public static void main(String[] args) throws IOException{
-		Gerador g = new Gerador(new Ambulancia(8), "grafoCidade2.txt");
-		SimulatedAnnealing sm = new SimulatedAnnealing(10000, 0.0003, 0.001, g);
-		long startTime = System.nanoTime();
-		sm.run(false);
-		long endTime = System.nanoTime();
-		double duration = (endTime - startTime)/Math.pow(10, 9);
-		System.out.println("\nTempo de Execução: "+duration+" segundos.");
 	}
 }

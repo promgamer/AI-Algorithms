@@ -3,6 +3,8 @@ package graphicInterface;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
+import javax.swing.SpinnerModel;
+
 import java.awt.Font;
 import java.awt.BorderLayout;
 import javax.swing.BoxLayout;
@@ -16,15 +18,18 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JToggleButton;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeListener;
 
 @SuppressWarnings("serial")
 public class ArrSimuladoOptions extends JPanel {
 
 	private static final int DEFAULT_AMBULANCE_CAP = 10;
-	private static final int DEFAULT_TEMP_INICIAL = 12;
-	private static final int DEFAULT_TEMP_FINAL = 50;
+	private static final double DEFAULT_TEMP_INICIAL = 10000;
+	private static final double DEFAULT_TEMP_FINAL = 0.001;
 	private static final int DEFAULT_COMBUSTIVEL = 10;
-	private static final int DEFAULT_TAXA_ARREFECIMENTO = 100;
+	private static final double DEFAULT_TAXA_ARREFECIMENTO = 0.001;
 	private Clinica clinica;
 	/**
 	 * Create the panel.
@@ -46,7 +51,7 @@ public class ArrSimuladoOptions extends JPanel {
 		GridBagConstraints gbc_lblAmbulncia = new GridBagConstraints();
 		gbc_lblAmbulncia.gridwidth = 4;
 		gbc_lblAmbulncia.fill = GridBagConstraints.VERTICAL;
-		gbc_lblAmbulncia.insets = new Insets(0, 0, 5, 0);
+		gbc_lblAmbulncia.insets = new Insets(0, 0, 5, 5);
 		gbc_lblAmbulncia.gridx = 0;
 		gbc_lblAmbulncia.gridy = 0;
 		add(lblAmbulncia, gbc_lblAmbulncia);
@@ -66,7 +71,7 @@ public class ArrSimuladoOptions extends JPanel {
 		GridBagConstraints gbc_spinnerCapacidadeAmbulancia = new GridBagConstraints();
 		gbc_spinnerCapacidadeAmbulancia.gridwidth = 2;
 		gbc_spinnerCapacidadeAmbulancia.fill = GridBagConstraints.BOTH;
-		gbc_spinnerCapacidadeAmbulancia.insets = new Insets(0, 0, 5, 0);
+		gbc_spinnerCapacidadeAmbulancia.insets = new Insets(0, 0, 5, 5);
 		gbc_spinnerCapacidadeAmbulancia.gridx = 2;
 		gbc_spinnerCapacidadeAmbulancia.gridy = 1;
 		add(spinnerCapacidadeAmbulancia, gbc_spinnerCapacidadeAmbulancia);
@@ -87,7 +92,7 @@ public class ArrSimuladoOptions extends JPanel {
 		GridBagConstraints gbc_spinnerCombustivel = new GridBagConstraints();
 		gbc_spinnerCombustivel.gridwidth = 2;
 		gbc_spinnerCombustivel.fill = GridBagConstraints.BOTH;
-		gbc_spinnerCombustivel.insets = new Insets(0, 0, 5, 0);
+		gbc_spinnerCombustivel.insets = new Insets(0, 0, 5, 5);
 		gbc_spinnerCombustivel.gridx = 2;
 		gbc_spinnerCombustivel.gridy = 2;
 		add(spinnerCombustivel, gbc_spinnerCombustivel);
@@ -98,7 +103,7 @@ public class ArrSimuladoOptions extends JPanel {
 		GridBagConstraints gbc_labelTemperatura = new GridBagConstraints();
 		gbc_labelTemperatura.fill = GridBagConstraints.VERTICAL;
 		gbc_labelTemperatura.gridwidth = 4;
-		gbc_labelTemperatura.insets = new Insets(0, 0, 5, 0);
+		gbc_labelTemperatura.insets = new Insets(0, 0, 5, 5);
 		gbc_labelTemperatura.gridx = 0;
 		gbc_labelTemperatura.gridy = 3;
 		add(labelTemperatura, gbc_labelTemperatura);
@@ -114,12 +119,12 @@ public class ArrSimuladoOptions extends JPanel {
 		add(lblTempInicial, gbc_lblTempInicial);
 		
 		final JSpinner spinnerTempInicial = new JSpinner();
+		spinnerTempInicial.setModel(new SpinnerNumberModel(new Double(DEFAULT_TEMP_INICIAL), new Double(0), null, new Double(1)));
 		spinnerTempInicial.setBounds(145, 49, 29, 20);
-		spinnerTempInicial.setValue(DEFAULT_TEMP_INICIAL);
 		GridBagConstraints gbc_spinnerTempInicial = new GridBagConstraints();
 		gbc_spinnerTempInicial.gridwidth = 2;
 		gbc_spinnerTempInicial.fill = GridBagConstraints.BOTH;
-		gbc_spinnerTempInicial.insets = new Insets(0, 0, 5, 0);
+		gbc_spinnerTempInicial.insets = new Insets(0, 0, 5, 5);
 		gbc_spinnerTempInicial.gridx = 2;
 		gbc_spinnerTempInicial.gridy = 4;
 		add(spinnerTempInicial, gbc_spinnerTempInicial);
@@ -135,12 +140,12 @@ public class ArrSimuladoOptions extends JPanel {
 		add(lblTempFinal, gbc_lblTempFinal);
 		
 		final JSpinner spinnerTempFinal = new JSpinner();
+		spinnerTempFinal.setModel(new SpinnerNumberModel(new Double(DEFAULT_TEMP_FINAL), new Double(0), null, new Double(0.1)));
 		spinnerTempFinal.setBounds(72, 74, 29, 20);
-		spinnerTempFinal.setValue(DEFAULT_TEMP_FINAL);
 		GridBagConstraints gbc_spinnerTempFinal = new GridBagConstraints();
 		gbc_spinnerTempFinal.gridwidth = 2;
 		gbc_spinnerTempFinal.fill = GridBagConstraints.BOTH;
-		gbc_spinnerTempFinal.insets = new Insets(0, 0, 5, 0);
+		gbc_spinnerTempFinal.insets = new Insets(0, 0, 5, 5);
 		gbc_spinnerTempFinal.gridx = 2;
 		gbc_spinnerTempFinal.gridy = 5;
 		add(spinnerTempFinal, gbc_spinnerTempFinal);
@@ -156,14 +161,33 @@ public class ArrSimuladoOptions extends JPanel {
 		
 		final JSpinner spinnerTaxaArrefecimento = new JSpinner();
 		spinnerTaxaArrefecimento.setBounds(156, 74, 29, 20);
-		spinnerTaxaArrefecimento.setValue(DEFAULT_TAXA_ARREFECIMENTO);
+		spinnerTaxaArrefecimento.setModel(new SpinnerNumberModel(new Double(DEFAULT_TAXA_ARREFECIMENTO), new Double(0), new Double(1), new Double(0.1)));
 		GridBagConstraints gbc_spinnerTaxaArrefecimento = new GridBagConstraints();
-		gbc_spinnerTaxaArrefecimento.insets = new Insets(0, 0, 5, 0);
+		gbc_spinnerTaxaArrefecimento.insets = new Insets(0, 0, 5, 5);
 		gbc_spinnerTaxaArrefecimento.gridwidth = 2;
 		gbc_spinnerTaxaArrefecimento.fill = GridBagConstraints.BOTH;
 		gbc_spinnerTaxaArrefecimento.gridx = 2;
 		gbc_spinnerTaxaArrefecimento.gridy = 6;
 		add(spinnerTaxaArrefecimento, gbc_spinnerTaxaArrefecimento);
+		
+		JLabel lblGeraoDeControlo = new JLabel("Gera\u00E7\u00E3o de Controlo");
+		GridBagConstraints gbc_lblGeraoDeControlo = new GridBagConstraints();
+		gbc_lblGeraoDeControlo.insets = new Insets(0, 0, 5, 5);
+		gbc_lblGeraoDeControlo.gridx = 0;
+		gbc_lblGeraoDeControlo.gridy = 7;
+		add(lblGeraoDeControlo, gbc_lblGeraoDeControlo);
+		
+		final JToggleButton tglbtnGeracaoControlo = new JToggleButton("Controlo");
+		GridBagConstraints gbc_tglbtnGeracaoControlo = new GridBagConstraints();
+		gbc_tglbtnGeracaoControlo.insets = new Insets(0, 0, 5, 5);
+		gbc_tglbtnGeracaoControlo.gridx = 2;
+		gbc_tglbtnGeracaoControlo.gridy = 7;
+		add(tglbtnGeracaoControlo, gbc_tglbtnGeracaoControlo);
+		GridBagConstraints gbc_btnStartGenetico = new GridBagConstraints();
+		gbc_btnStartGenetico.gridwidth = 6;
+		gbc_btnStartGenetico.gridx = 0;
+		gbc_btnStartGenetico.gridy = 8;
+		
 		
 		JButton btnStartGenetico = new JButton("Correr Algoritmo!");
 		btnStartGenetico.addMouseListener(new MouseAdapter() {
@@ -171,17 +195,15 @@ public class ArrSimuladoOptions extends JPanel {
 			public void mouseClicked(MouseEvent arg0) {
 				int capacidadeAmbulancia = (int) spinnerCapacidadeAmbulancia.getValue();
 				int combustivel = (int) spinnerCombustivel.getValue();
-				int tempInicial = (int) spinnerTempInicial.getValue();
-				int tempFinal = (int) spinnerTempFinal.getValue();
-				int taxaArrefecimento = (int) spinnerTaxaArrefecimento.getValue();
+				double tempInicial = (double) spinnerTempInicial.getValue();
+				double tempFinal = (double) spinnerTempFinal.getValue();
+				double taxaArrefecimento = (double) spinnerTaxaArrefecimento.getValue();
+				boolean controlo = tglbtnGeracaoControlo.isSelected();
 				
-				clinica.startSimulated(capacidadeAmbulancia, combustivel, tempInicial, tempFinal, taxaArrefecimento);
+				clinica.startSimulated(capacidadeAmbulancia, combustivel, tempInicial, tempFinal, taxaArrefecimento, controlo);
 			}
 		});
-		GridBagConstraints gbc_btnStartGenetico = new GridBagConstraints();
-		gbc_btnStartGenetico.gridwidth = 6;
-		gbc_btnStartGenetico.gridx = 0;
-		gbc_btnStartGenetico.gridy = 8;
+		
 		add(btnStartGenetico, gbc_btnStartGenetico);
 
 	}
