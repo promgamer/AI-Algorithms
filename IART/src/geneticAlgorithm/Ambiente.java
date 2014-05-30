@@ -30,6 +30,7 @@ public class Ambiente {
 	
 	/** Variavel Especial Usada apenas para o mostrar o resultado final**/
 	private Rota r;
+	private Vector<Integer> percurso;
 	private boolean mostra_melhor;
 	
 	/** Construtor Default **/
@@ -46,6 +47,9 @@ public class Ambiente {
 		cidade = Clinica.parseGrafoCidade(graphPath);
 		this.rota = (Vector<Integer>) r.clone();
 		mostra_melhor = mostrar;
+		
+		if( mostra_melhor )
+			percurso = new Vector<Integer>();
 	}
 	
 	
@@ -58,17 +62,21 @@ public class Ambiente {
 		double pacientes_recolhidos = 0;
 		double pacientes_entregues = 0;
 		double distancia_percorrida = 0;
+		int total_pacientes = pacientesPorTransportar();
 		
 		/* Variveis de verificacao de rota */
 		int idAtual = NoInicial;
 		int idAntigo;
+		
+		if( mostra_melhor)
+			percurso.add(idAtual);
 
 		// CICLO
 		while(ambulancia.combustivel_restante() > 0 && rota.size() != 0){
 			
 			// Guarda o no atual como antigo
 			idAntigo = idAtual;
-			
+
 			//obtem o no atual
 			idAtual = rota.remove(0);
 			
@@ -97,7 +105,9 @@ public class Ambiente {
 			if( verificaFimDeRota(edAtual) == true )
 				break;
 
-				
+			if( mostra_melhor)
+				percurso.add(idAtual);
+			
 			
 			/** Verifica as habitações e faz ações consoante o seu tipo **/
 			
@@ -136,7 +146,7 @@ public class Ambiente {
 		
 		/** Utilizado apenas para a impressao do resultado final **/
 		if( mostra_melhor)
-			r = new Rota(pacientes_entregues, pacientes_recolhidos, distancia_percorrida, fitness);
+			r = new Rota(pacientes_entregues, pacientes_recolhidos, distancia_percorrida, fitness, percurso, total_pacientes);
 		
 		return fitness;
 		
