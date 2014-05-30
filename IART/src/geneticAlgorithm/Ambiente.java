@@ -31,7 +31,7 @@ public class Ambiente {
 	
 	/** Variavel Especial Usada apenas para o mostrar o resultado final**/
 	private Rota r;
-	private Vector<Integer> percurso;
+	private Vector<String> percurso;
 	private boolean mostra_melhor;
 	
 	/** Construtor Default **/
@@ -50,7 +50,7 @@ public class Ambiente {
 		mostra_melhor = mostrar;
 		
 		if( mostra_melhor )
-			percurso = new Vector<Integer>();
+			percurso = new Vector<String>();
 	}
 	
 	
@@ -70,7 +70,7 @@ public class Ambiente {
 		int idAntigo = 0;
 		
 		if( mostra_melhor)
-			percurso.add(idAtual);
+			percurso.add(obtemVertice(idAtual).nome);
 
 		// CICLO
 		while(ambulancia.combustivel_restante() > 0 && rota.size() != 0){
@@ -107,7 +107,7 @@ public class Ambiente {
 				break;
 
 			if( mostra_melhor)
-				percurso.add(idAtual);
+				percurso.add(obtemVertice(idAtual).nome);
 			
 			
 			/** Verifica as habitações e faz ações consoante o seu tipo **/
@@ -199,20 +199,6 @@ public class Ambiente {
 		return (int) cidade.getEdgeWeight(cidade.getEdge(N1, N2));
 	}
 	
-	private int getRandomSucursal(){
-		Vector<Edificio> edificios = new Vector<>(cidade.vertexSet());
-		Edificio e = null;
-		
-		do{
-			Random r = new Random();
-			int ed = r.nextInt(edificios.size());
-			
-			e = edificios.elementAt(ed);
-			
-		}while( !(obtemVertice(e.ID) instanceof Sucursal) );
-		
-		return e.ID;
-	}
 	
 	/** Define a capacidade da ambulancia **/
 	public static void setCapacidadeAmbulancia(int i) {

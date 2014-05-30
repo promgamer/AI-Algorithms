@@ -10,21 +10,21 @@ public class Rota{
 	private double distancia;
 	private double fitness;
 	private int totais;
-	private Vector<Integer> rota;
+	private Vector<String> rota;
 	
-	public Rota(double pacientes_entregues, double pacientes_recolhidos, double distancia, double fitness, Vector<Integer> rota, int totais){
+	public Rota(double pacientes_entregues, double pacientes_recolhidos, double distancia, double fitness, Vector<String> percurso, int totais){
 		this.entregues = pacientes_entregues;
 		this.recolhidos = pacientes_recolhidos;
 		this.distancia = distancia;
 		this.fitness = fitness;
-		this.rota = rota;
+		this.rota = percurso;
 		this.totais = totais;
 	}
 	
 	@Override
 	public String toString() {
 		return "*** Resultado *** \n" +
-				"Rota: " + mostraRotaMinima() + "\n" +
+				"Rota:" + mostraRotaMinima() + "\n" +
 				"Nr Deslocacoes: " + (rota.size()-1) + " || Fitness: " + fitness + " || Distancia Percorrida: " + distancia + "\n" +
 				"Pacientes No Mapa: " + totais + " || Recolhidos: " + recolhidos + " || Entregues: " + entregues;
 	}
