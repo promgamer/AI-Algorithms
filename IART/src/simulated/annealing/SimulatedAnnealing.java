@@ -43,8 +43,8 @@ public class SimulatedAnnealing {
             }
             
             temperaturaAtual *= 1-taxaArrefecimento;
-            System.out.println("Temperatura: " + temperaturaAtual);
 		} while( temperaturaAtual > temperaturaFinal);
+		System.out.println("Temperatura Final: " + temperaturaFinal);
 		
 		System.out.println("Melhor Solucao:");
 		melhorSolucao.print();

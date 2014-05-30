@@ -209,7 +209,7 @@ public class Clinica extends JApplet {
 			e.printStackTrace();
 		}
 		
-		SimulatedAnnealing sm = new SimulatedAnnealing(tempFinal, tempFinal, taxaArrefecimento, g);
+		SimulatedAnnealing sm = new SimulatedAnnealing(tempInicial, tempFinal, taxaArrefecimento, g);
 		
 		long startTime = System.nanoTime();
 		try {
