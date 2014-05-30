@@ -46,7 +46,7 @@ public class Rota {
 		Vector<Entry<Boolean, Boolean>> tmpS = r.getEstados();
 		Vector<Double> tmpD = r.getDistancias();
 		Vector<Entry<Integer, Double>> tmpA = r.getEstadosAmbulancia();
-
+		System.out.println("Distancias : "+tmpD.size());
 		for(int i=0; i<n; i++){
 			rota.add(tmpE.get(i));
 			nrPacientes.add(tmpP.get(i));
