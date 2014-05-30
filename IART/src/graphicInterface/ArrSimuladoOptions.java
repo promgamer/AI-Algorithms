@@ -21,6 +21,8 @@ import java.awt.event.MouseEvent;
 import javax.swing.JToggleButton;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeListener;
+import javax.swing.JTextField;
+import javax.swing.JFormattedTextField;
 
 @SuppressWarnings("serial")
 public class ArrSimuladoOptions extends JPanel {
@@ -41,7 +43,7 @@ public class ArrSimuladoOptions extends JPanel {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] {97, 41, 0, 85};
 		gridBagLayout.rowHeights = new int[] {41, 41, 41, 41, 41, 41, 0, 0, 0, 41};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, 0.0};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, 1.0};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		
@@ -118,8 +120,7 @@ public class ArrSimuladoOptions extends JPanel {
 		gbc_lblTempInicial.gridy = 4;
 		add(lblTempInicial, gbc_lblTempInicial);
 		
-		final JSpinner spinnerTempInicial = new JSpinner();
-		spinnerTempInicial.setModel(new SpinnerNumberModel(new Double(DEFAULT_TEMP_INICIAL), new Double(0), null, new Double(1)));
+		final JTextField spinnerTempInicial = new JTextField( new String (new Double(DEFAULT_TEMP_INICIAL).toString() ) );
 		spinnerTempInicial.setBounds(145, 49, 29, 20);
 		GridBagConstraints gbc_spinnerTempInicial = new GridBagConstraints();
 		gbc_spinnerTempInicial.gridwidth = 2;
@@ -139,8 +140,7 @@ public class ArrSimuladoOptions extends JPanel {
 		gbc_lblTempFinal.gridy = 5;
 		add(lblTempFinal, gbc_lblTempFinal);
 		
-		final JSpinner spinnerTempFinal = new JSpinner();
-		spinnerTempFinal.setModel(new SpinnerNumberModel(new Double(DEFAULT_TEMP_FINAL), new Double(0), null, new Double(0.1)));
+		final JTextField spinnerTempFinal = new JTextField( new String (new Double(DEFAULT_TEMP_FINAL).toString() ));
 		spinnerTempFinal.setBounds(72, 74, 29, 20);
 		GridBagConstraints gbc_spinnerTempFinal = new GridBagConstraints();
 		gbc_spinnerTempFinal.gridwidth = 2;
@@ -159,9 +159,8 @@ public class ArrSimuladoOptions extends JPanel {
 		gbc_lblTaxaArrefecimento.gridy = 6;
 		add(lblTaxaArrefecimento, gbc_lblTaxaArrefecimento);
 		
-		final JSpinner spinnerTaxaArrefecimento = new JSpinner();
+		final JTextField spinnerTaxaArrefecimento = new JTextField( new String (new Double(DEFAULT_TAXA_ARREFECIMENTO).toString() ));
 		spinnerTaxaArrefecimento.setBounds(156, 74, 29, 20);
-		spinnerTaxaArrefecimento.setModel(new SpinnerNumberModel(new Double(DEFAULT_TAXA_ARREFECIMENTO), new Double(0), new Double(1), new Double(0.1)));
 		GridBagConstraints gbc_spinnerTaxaArrefecimento = new GridBagConstraints();
 		gbc_spinnerTaxaArrefecimento.insets = new Insets(0, 0, 5, 5);
 		gbc_spinnerTaxaArrefecimento.gridwidth = 2;
@@ -195,9 +194,9 @@ public class ArrSimuladoOptions extends JPanel {
 			public void mouseClicked(MouseEvent arg0) {
 				int capacidadeAmbulancia = (int) spinnerCapacidadeAmbulancia.getValue();
 				int combustivel = (int) spinnerCombustivel.getValue();
-				double tempInicial = (double) spinnerTempInicial.getValue();
-				double tempFinal = (double) spinnerTempFinal.getValue();
-				double taxaArrefecimento = (double) spinnerTaxaArrefecimento.getValue();
+				double tempInicial = new Double(spinnerTempInicial.getText());
+				double tempFinal = new Double(spinnerTempFinal.getText());
+				double taxaArrefecimento = new Double(spinnerTaxaArrefecimento.getText());
 				boolean controlo = tglbtnGeracaoControlo.isSelected();
 				
 				clinica.startSimulated(capacidadeAmbulancia, combustivel, tempInicial, tempFinal, taxaArrefecimento, controlo);

@@ -1,5 +1,6 @@
 package geneticAlgorithm;
 
+import java.util.Random;
 import java.util.Vector;
 
 public class Populacao {
@@ -48,6 +49,13 @@ public class Populacao {
                 melhor = individuos.elementAt(i);
             }
         }
+		
+		if(melhor.getAdaptacao() == 0){
+			Random r = new Random();
+			int rand = r.nextInt(individuos.size());
+			return individuos.elementAt(rand);
+		}
+		
 		return melhor;
 	}
 
@@ -55,7 +63,4 @@ public class Populacao {
 		for(int i = 0; i < individuos.size(); i++)
 			individuos.elementAt(i).imprimeGenes();
 	}
-	
-	
-
 }

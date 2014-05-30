@@ -169,12 +169,13 @@ public class Clinica extends JApplet {
 	}
 
 
-	public void startGenetic(int capacidadeAmbulancia, int combustivel, int tamanhoPop, int tamanhoGenes, int geracoes) {
+	public void startGenetic(int capacidadeAmbulancia, int combustivel, int tamanhoPop, int tamanhoGenes, int geracoes, boolean elitismo) {
 		/* Calculos do algoritmo genetico */
 		int contador = 1;
 		
 		Ambulancia.setMaxCombustivel(combustivel);
 		Ambiente.setCapacidadeAmbulancia((capacidadeAmbulancia));
+		EvoluiPopulacao.setElitismo(elitismo);
 
 		long startTime = System.nanoTime();
 		Populacao pop = new Populacao(tamanhoPop, tamanhoGenes, cidade.vertexSet().size());;
@@ -182,7 +183,7 @@ public class Clinica extends JApplet {
 		while( contador != geracoes){
 			pop = EvoluiPopulacao.evoluiPopulacao(pop);
 			
-			System.out.print("Geracao " + contador + ": " + pop.getMelhorAdaptado().toString() + " : ");
+			System.out.print("Geracao " + contador + ":\n        Fitness do Melhor: " + pop.getMelhorAdaptado().toString() + "\n        Genes do Melhor: ");
 			pop.getMelhorAdaptado().imprimeGenes();
 			contador++;
 		}
@@ -209,7 +210,7 @@ public class Clinica extends JApplet {
 			e.printStackTrace();
 		}
 		
-		SimulatedAnnealing sm = new SimulatedAnnealing(tempInicial, tempFinal, taxaArrefecimento, g);
+		SimulatedAnnealing sm = new SimulatedAnnealing(tempInicial, taxaArrefecimento, tempFinal, g);
 		
 		long startTime = System.nanoTime();
 		try {

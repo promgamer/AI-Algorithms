@@ -2,6 +2,7 @@ package geneticAlgorithm;
 
 import graphicInterface.Clinica;
 
+import java.util.Random;
 import java.util.Vector;
 
 import logic.Ambulancia;
@@ -66,7 +67,7 @@ public class Ambiente {
 		
 		/* Variveis de verificacao de rota */
 		int idAtual = NoInicial;
-		int idAntigo;
+		int idAntigo = 0;
 		
 		if( mostra_melhor)
 			percurso.add(idAtual);
@@ -74,9 +75,9 @@ public class Ambiente {
 		// CICLO
 		while(ambulancia.combustivel_restante() > 0 && rota.size() != 0){
 			
-			// Guarda o no atual como antigo
+			//guarda o antigo
 			idAntigo = idAtual;
-
+						
 			//obtem o no atual
 			idAtual = rota.remove(0);
 			
@@ -144,6 +145,11 @@ public class Ambiente {
 			fitness = PONTOS_RECOLHIDO * pacientes_recolhidos + PONTOS_ENTREGUE * pacientes_entregues - PONTOS_DISTANCIA * distancia_percorrida - PONTOS_POR_TRANSPORTAR * pacientesPorTransportar();
 		else fitness = 0;
 		
+		if( fitness < 0)
+			fitness = (PONTOS_RECOLHIDO * pacientes_recolhidos + PONTOS_ENTREGUE * pacientes_entregues) * 0.001;
+		
+		
+		
 		/** Utilizado apenas para a impressao do resultado final **/
 		if( mostra_melhor)
 			r = new Rota(pacientes_entregues, pacientes_recolhidos, distancia_percorrida, fitness, percurso, total_pacientes);
@@ -191,6 +197,21 @@ public class Ambiente {
 	/** Calcula a distancia percorrida entre dois nos **/
 	private int calculaDistancia(Edificio N1, Edificio N2){
 		return (int) cidade.getEdgeWeight(cidade.getEdge(N1, N2));
+	}
+	
+	private int getRandomSucursal(){
+		Vector<Edificio> edificios = new Vector<>(cidade.vertexSet());
+		Edificio e = null;
+		
+		do{
+			Random r = new Random();
+			int ed = r.nextInt(edificios.size());
+			
+			e = edificios.elementAt(ed);
+			
+		}while( !(obtemVertice(e.ID) instanceof Sucursal) );
+		
+		return e.ID;
 	}
 	
 	/** Define a capacidade da ambulancia **/

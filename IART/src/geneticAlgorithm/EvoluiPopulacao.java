@@ -1,12 +1,14 @@
 package geneticAlgorithm;
 
+import java.util.Random;
 import java.util.Vector;
 
 public class EvoluiPopulacao {
 	
 	private static final double escolhaCrossover = 0.5;
-    private static final double probabilidadeMutacao = 0.015;
+    private static final double probabilidadeMutacao = 0.15;
     private static final int tamanhoPopRandom = 5;
+    private static boolean elitismo;
     
     
     /** 
@@ -17,11 +19,20 @@ public class EvoluiPopulacao {
     public static Populacao evoluiPopulacao(Populacao populacaoAntiga){
     	Populacao novaPopulacao = new Populacao(populacaoAntiga.getSize());
     	
+    	int i = 1;
+    	
     	// Politica elitista: manter sempre o melhor
-    	novaPopulacao.setIndividuo(0, populacaoAntiga.getMelhorAdaptado());
+    	if(elitismo == true){
+    		Individuo ind = populacaoAntiga.getMelhorAdaptado();
+    		
+    		if( ind.getAdaptacao() > 0)
+    			novaPopulacao.setIndividuo(0, ind);
+    		else i = 0;
+    		
+    	} else i = 0; // nao guarda o melhor
     	
     	/** Crossover Aleatorio **/
-    	for(int i = 1; i < populacaoAntiga.getSize(); i++){
+    	for( ; i < populacaoAntiga.getSize(); i++){
     		Individuo indiv1 = selecionaIndividuo(populacaoAntiga);
     		Individuo indiv2 = selecionaIndividuo(populacaoAntiga);
     		
@@ -29,8 +40,12 @@ public class EvoluiPopulacao {
     		novaPopulacao.setIndividuo(i, novo);
     	}
     	
+    	if(elitismo == true)
+    		i = 1;
+    	else i = 0;
+    	
     	/** Faz as mutacoes aleatorias ; o individuo "perfeito" nao sobre mutacao **/
-    	for(int i = 1; i < novaPopulacao.getSize(); i++)
+    	for( ; i < novaPopulacao.getSize(); i++)
     		mutacao(novaPopulacao.getIndividuo(i));
     	
     
@@ -39,7 +54,7 @@ public class EvoluiPopulacao {
     
     /** Escolhe um individuo para o crossover 
      * 
-     * ROLETA TODO;
+     * Utilizando o método de Torneio
      * 
      * **/
     private static Individuo selecionaIndividuo(Populacao pop) {
@@ -47,7 +62,8 @@ public class EvoluiPopulacao {
         Populacao temp = new Populacao(tamanhoPopRandom);
         
         for (int i = 0; i < tamanhoPopRandom; i++) {
-            int random = (int) (Math.random() * pop.getSize());
+        	Random r = new Random();
+        	int random = r.nextInt(pop.getSize());
             temp.setIndividuo(i, pop.getIndividuo(random));
         }
         // Get the fittest
@@ -67,9 +83,7 @@ public class EvoluiPopulacao {
     
     /** Faz o crossover 
      * 
-     * O crossover é calculado gene a gene... <- MAL
-     * 
-     * TODO: refazer funcao -> pontos de crossover
+     * O crossover é calculado gene a gene...
      * 
      * **/
     private static Individuo crossover(Individuo indiv1, Individuo indiv2) {
@@ -86,6 +100,10 @@ public class EvoluiPopulacao {
         
         Individuo novo = new Individuo(genes);
         return novo;
+    }
+    
+    public static void setElitismo(boolean e){
+    	elitismo = e;
     }
 
 }

@@ -16,6 +16,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JToggleButton;
 
 @SuppressWarnings("serial")
 public class GeneticOptions extends JPanel {
@@ -46,7 +47,7 @@ public class GeneticOptions extends JPanel {
 		GridBagConstraints gbc_lblAmbulncia = new GridBagConstraints();
 		gbc_lblAmbulncia.gridwidth = 4;
 		gbc_lblAmbulncia.fill = GridBagConstraints.VERTICAL;
-		gbc_lblAmbulncia.insets = new Insets(0, 0, 5, 0);
+		gbc_lblAmbulncia.insets = new Insets(0, 0, 5, 5);
 		gbc_lblAmbulncia.gridx = 0;
 		gbc_lblAmbulncia.gridy = 0;
 		add(lblAmbulncia, gbc_lblAmbulncia);
@@ -66,7 +67,7 @@ public class GeneticOptions extends JPanel {
 		GridBagConstraints gbc_spinnerCapacidadeAmbulancia = new GridBagConstraints();
 		gbc_spinnerCapacidadeAmbulancia.gridwidth = 2;
 		gbc_spinnerCapacidadeAmbulancia.fill = GridBagConstraints.BOTH;
-		gbc_spinnerCapacidadeAmbulancia.insets = new Insets(0, 0, 5, 0);
+		gbc_spinnerCapacidadeAmbulancia.insets = new Insets(0, 0, 5, 5);
 		gbc_spinnerCapacidadeAmbulancia.gridx = 2;
 		gbc_spinnerCapacidadeAmbulancia.gridy = 1;
 		add(spinnerCapacidadeAmbulancia, gbc_spinnerCapacidadeAmbulancia);
@@ -87,7 +88,7 @@ public class GeneticOptions extends JPanel {
 		GridBagConstraints gbc_spinnerCombustivel = new GridBagConstraints();
 		gbc_spinnerCombustivel.gridwidth = 2;
 		gbc_spinnerCombustivel.fill = GridBagConstraints.BOTH;
-		gbc_spinnerCombustivel.insets = new Insets(0, 0, 5, 0);
+		gbc_spinnerCombustivel.insets = new Insets(0, 0, 5, 5);
 		gbc_spinnerCombustivel.gridx = 2;
 		gbc_spinnerCombustivel.gridy = 2;
 		add(spinnerCombustivel, gbc_spinnerCombustivel);
@@ -98,7 +99,7 @@ public class GeneticOptions extends JPanel {
 		GridBagConstraints gbc_labelPopulacao = new GridBagConstraints();
 		gbc_labelPopulacao.fill = GridBagConstraints.VERTICAL;
 		gbc_labelPopulacao.gridwidth = 4;
-		gbc_labelPopulacao.insets = new Insets(0, 0, 5, 0);
+		gbc_labelPopulacao.insets = new Insets(0, 0, 5, 5);
 		gbc_labelPopulacao.gridx = 0;
 		gbc_labelPopulacao.gridy = 3;
 		add(labelPopulacao, gbc_labelPopulacao);
@@ -119,7 +120,7 @@ public class GeneticOptions extends JPanel {
 		GridBagConstraints gbc_spinnerTamanhoGenes = new GridBagConstraints();
 		gbc_spinnerTamanhoGenes.gridwidth = 2;
 		gbc_spinnerTamanhoGenes.fill = GridBagConstraints.BOTH;
-		gbc_spinnerTamanhoGenes.insets = new Insets(0, 0, 5, 0);
+		gbc_spinnerTamanhoGenes.insets = new Insets(0, 0, 5, 5);
 		gbc_spinnerTamanhoGenes.gridx = 2;
 		gbc_spinnerTamanhoGenes.gridy = 4;
 		add(spinnerTamanhoGenes, gbc_spinnerTamanhoGenes);
@@ -140,7 +141,7 @@ public class GeneticOptions extends JPanel {
 		GridBagConstraints gbc_spinnerTamanhoPop = new GridBagConstraints();
 		gbc_spinnerTamanhoPop.gridwidth = 2;
 		gbc_spinnerTamanhoPop.fill = GridBagConstraints.BOTH;
-		gbc_spinnerTamanhoPop.insets = new Insets(0, 0, 5, 0);
+		gbc_spinnerTamanhoPop.insets = new Insets(0, 0, 5, 5);
 		gbc_spinnerTamanhoPop.gridx = 2;
 		gbc_spinnerTamanhoPop.gridy = 5;
 		add(spinnerTamanhoPop, gbc_spinnerTamanhoPop);
@@ -158,12 +159,23 @@ public class GeneticOptions extends JPanel {
 		spinnerGeracoes.setBounds(156, 74, 29, 20);
 		spinnerGeracoes.setValue(DEFAUlT_GENERATIONS);
 		GridBagConstraints gbc_spinnerGeracoes = new GridBagConstraints();
-		gbc_spinnerGeracoes.insets = new Insets(0, 0, 5, 0);
+		gbc_spinnerGeracoes.insets = new Insets(0, 0, 5, 5);
 		gbc_spinnerGeracoes.gridwidth = 2;
 		gbc_spinnerGeracoes.fill = GridBagConstraints.BOTH;
 		gbc_spinnerGeracoes.gridx = 2;
 		gbc_spinnerGeracoes.gridy = 6;
 		add(spinnerGeracoes, gbc_spinnerGeracoes);
+		
+		final JToggleButton elistismoButton = new JToggleButton("Elitismo");
+		GridBagConstraints gbc_elistismoButton = new GridBagConstraints();
+		gbc_elistismoButton.insets = new Insets(0, 0, 5, 5);
+		gbc_elistismoButton.gridx = 2;
+		gbc_elistismoButton.gridy = 7;
+		add(elistismoButton, gbc_elistismoButton);
+		GridBagConstraints gbc_btnStartGenetico = new GridBagConstraints();
+		gbc_btnStartGenetico.gridwidth = 6;
+		gbc_btnStartGenetico.gridx = 0;
+		gbc_btnStartGenetico.gridy = 8;
 		
 		JButton btnStartGenetico = new JButton("Correr Algoritmo!");
 		btnStartGenetico.addMouseListener(new MouseAdapter() {
@@ -174,14 +186,13 @@ public class GeneticOptions extends JPanel {
 				int tamanhoPop = (int) spinnerTamanhoPop.getValue();
 				int tamanhoGenes = (int) spinnerTamanhoGenes.getValue();
 				int geracoes = (int) spinnerGeracoes.getValue();
+				boolean elitismo = elistismoButton.isSelected();
 				
-				clinica.startGenetic(capacidadeAmbulancia, combustivel, tamanhoPop, tamanhoGenes, geracoes);
+				clinica.startGenetic(capacidadeAmbulancia, combustivel, tamanhoPop, tamanhoGenes, geracoes, elitismo);
 			}
 		});
-		GridBagConstraints gbc_btnStartGenetico = new GridBagConstraints();
-		gbc_btnStartGenetico.gridwidth = 6;
-		gbc_btnStartGenetico.gridx = 0;
-		gbc_btnStartGenetico.gridy = 8;
+		
+		
 		add(btnStartGenetico, gbc_btnStartGenetico);
 
 	}
