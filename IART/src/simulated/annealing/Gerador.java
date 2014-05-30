@@ -88,10 +88,11 @@ public class Gerador {
 			tmpEdfs=new Vector<Edificio>();
 
 			//Escolher edificio inicial -> tem de ser uma sucursal(apenas sucursais têm garagem e a ambulancia)
-			do{
+			/*do{
 				int rng = (int)(Math.random() * edificios.size());
 				atual = edificios.get( rng );
-			}while(!(atual instanceof Sucursal));
+			}while(!(atual instanceof Sucursal));*/
+			atual = edificios.get(0);
 
 			// adicionar o edificio atual à rota antes de progredir
 			rota.adicionarEdificio(atual, nrPacientesRestantes);
