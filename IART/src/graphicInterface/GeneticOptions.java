@@ -14,6 +14,8 @@ import javax.swing.JSeparator;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 @SuppressWarnings("serial")
 public class GeneticOptions extends JPanel {
@@ -21,12 +23,16 @@ public class GeneticOptions extends JPanel {
 	private static final int DEFAULT_AMBULANCE_CAP = 10;
 	private static final int DEFAULT_GENES_SIZE = 12;
 	private static final int DEFAULT_POPULATION_SIZE = 50;
-	private static final Object DEFAULT_COMBUSTIVEL = null;
-
+	private static final int DEFAULT_COMBUSTIVEL = 10;
+	private static final int DEFAUlT_GENERATIONS = 100;
+	private Clinica clinica;
 	/**
 	 * Create the panel.
 	 */
-	public GeneticOptions() {
+	public GeneticOptions(Clinica c) {
+		
+		clinica = c;
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] {97, 41, 0, 85};
 		gridBagLayout.rowHeights = new int[] {41, 41, 41, 41, 41, 41, 0, 0, 0, 41};
@@ -54,7 +60,7 @@ public class GeneticOptions extends JPanel {
 		gbc_lblCapacidade.gridy = 1;
 		add(lblCapacidade, gbc_lblCapacidade);
 		
-		JSpinner spinnerCapacidadeAmbulancia = new JSpinner();
+		final JSpinner spinnerCapacidadeAmbulancia = new JSpinner();
 		spinnerCapacidadeAmbulancia.setBounds(30, 24, 29, 20);
 		spinnerCapacidadeAmbulancia.setValue(DEFAULT_AMBULANCE_CAP);
 		GridBagConstraints gbc_spinnerCapacidadeAmbulancia = new GridBagConstraints();
@@ -75,7 +81,7 @@ public class GeneticOptions extends JPanel {
 		gbc_lblCombustivelAmbulancia.gridy = 2;
 		add(lblCombustivelAmbulancia, gbc_lblCombustivelAmbulancia);
 		
-		JSpinner spinnerCombustivel = new JSpinner();
+		final JSpinner spinnerCombustivel = new JSpinner();
 		spinnerCombustivel.setBounds(64, 24, 29, 20);
 		spinnerCombustivel.setValue(DEFAULT_COMBUSTIVEL);
 		GridBagConstraints gbc_spinnerCombustivel = new GridBagConstraints();
@@ -107,7 +113,7 @@ public class GeneticOptions extends JPanel {
 		gbc_lblTamanhoGenes.gridy = 4;
 		add(lblTamanhoGenes, gbc_lblTamanhoGenes);
 		
-		JSpinner spinnerTamanhoGenes = new JSpinner();
+		final JSpinner spinnerTamanhoGenes = new JSpinner();
 		spinnerTamanhoGenes.setBounds(145, 49, 29, 20);
 		spinnerTamanhoGenes.setValue(DEFAULT_GENES_SIZE);
 		GridBagConstraints gbc_spinnerTamanhoGenes = new GridBagConstraints();
@@ -128,8 +134,9 @@ public class GeneticOptions extends JPanel {
 		gbc_lblTamanhoPopulacao.gridy = 5;
 		add(lblTamanhoPopulacao, gbc_lblTamanhoPopulacao);
 		
-		JSpinner spinnerTamanhoPop = new JSpinner();
+		final JSpinner spinnerTamanhoPop = new JSpinner();
 		spinnerTamanhoPop.setBounds(72, 74, 29, 20);
+		spinnerTamanhoPop.setValue(DEFAULT_POPULATION_SIZE);
 		GridBagConstraints gbc_spinnerTamanhoPop = new GridBagConstraints();
 		gbc_spinnerTamanhoPop.gridwidth = 2;
 		gbc_spinnerTamanhoPop.fill = GridBagConstraints.BOTH;
@@ -147,8 +154,9 @@ public class GeneticOptions extends JPanel {
 		gbc_lblGeraes.gridy = 6;
 		add(lblGeraes, gbc_lblGeraes);
 		
-		JSpinner spinnerGeracoes = new JSpinner();
+		final JSpinner spinnerGeracoes = new JSpinner();
 		spinnerGeracoes.setBounds(156, 74, 29, 20);
+		spinnerGeracoes.setValue(DEFAUlT_GENERATIONS);
 		GridBagConstraints gbc_spinnerGeracoes = new GridBagConstraints();
 		gbc_spinnerGeracoes.insets = new Insets(0, 0, 5, 0);
 		gbc_spinnerGeracoes.gridwidth = 2;
@@ -158,8 +166,16 @@ public class GeneticOptions extends JPanel {
 		add(spinnerGeracoes, gbc_spinnerGeracoes);
 		
 		JButton btnStartGenetico = new JButton("Correr Algoritmo!");
-		btnStartGenetico.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+		btnStartGenetico.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				int capacidadeAmbulancia = (int) spinnerCapacidadeAmbulancia.getValue();
+				int combustivel = (int) spinnerCombustivel.getValue();
+				int tamanhoPop = (int) spinnerTamanhoPop.getValue();
+				int tamanhoGenes = (int) spinnerTamanhoGenes.getValue();
+				int geracoes = (int) spinnerGeracoes.getValue();
+				
+				clinica.startGenetic(capacidadeAmbulancia, combustivel, tamanhoPop, tamanhoGenes, geracoes);
 			}
 		});
 		GridBagConstraints gbc_btnStartGenetico = new GridBagConstraints();
