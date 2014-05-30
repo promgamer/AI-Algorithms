@@ -5,6 +5,8 @@ import java.util.AbstractMap;
 import java.util.Vector;
 
 import logic.Edificio;
+import logic.Habitacao;
+import logic.Sucursal;
 
 public class Rota {
 	private Vector<Edificio> rota = null;
@@ -46,7 +48,7 @@ public class Rota {
 		Vector<Entry<Boolean, Boolean>> tmpS = r.getEstados();
 		Vector<Double> tmpD = r.getDistancias();
 		Vector<Entry<Integer, Double>> tmpA = r.getEstadosAmbulancia();
-		System.out.println("Distancias : "+tmpD.size());
+
 		for(int i=0; i<n; i++){
 			rota.add(tmpE.get(i));
 			nrPacientes.add(tmpP.get(i));
@@ -88,7 +90,6 @@ public class Rota {
 				:estado.lastElement();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public Entry<Integer, Double> getUltimoEstadoAmbulancia() {
 		return estadoAmbulancia.isEmpty()?
 				new AbstractMap.SimpleEntry<Integer, Double>(0,0.0)
@@ -119,13 +120,23 @@ public class Rota {
 		distanciaTotal += d;
 		distancias.add(distanciaTotal);
 	}
+	
+	private String getType(Edificio e){
+		if(e instanceof Sucursal)
+			return "S";
+		else if( e instanceof Habitacao)
+			return "H";
+		else
+			return "B";
+	}
 
 	public void print() {
 		for(int i=0; i<rota.size(); i++){
 			System.out.println(rota.elementAt(i).ID + " - " + rota.elementAt(i).nome+
+					"\t"+getType(rota.elementAt(i))+
 					"\t Em Falta: "+nrPacientes.get(i)+
 					"\t Distancia Percorrida: "+distancias.get(i)+
-					"\t Bomba? "+estado.get(i).getKey()+" | Sucursal? "+estado.get(i).getValue()+
+					//"\t Bomba? "+estado.get(i).getKey()+" | Sucursal? "+estado.get(i).getValue()+
 					"\t Ambulancia -> Ocupantes: "+estadoAmbulancia.get(i).getKey()+" | Combustível: "+estadoAmbulancia.get(i).getValue());
 		}
 		System.out.println("Distancia Total: "+distanciaTotal);

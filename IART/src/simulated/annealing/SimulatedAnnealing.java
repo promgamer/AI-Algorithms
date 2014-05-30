@@ -26,7 +26,7 @@ public class SimulatedAnnealing {
 	public void run(boolean full) throws IOException{
 		Rota solucaoAtual = gerador.geraRota(null);
 		Rota melhorSolucao = new Rota(solucaoAtual);
-		
+		System.out.println("Temperatura Inicial: " + temperaturaAtual);
 		do {
 			Rota novaSolucao = full?gerador.geraRota(null):gerador.geraRota(solucaoAtual); 
 			
